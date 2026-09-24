@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSCS-V-B (Shift-I)</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #fff;
+      font-family: Arial, sans-serif;
+      padding: 10px 16px 10px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* ── Top label ── */
+    .air-uni {
+      font-size: 0.75rem;
+      margin-bottom: 2px;
+    }
+
+    /* ── Title ── */
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #000;
+    }
+
+    /* ── Table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    /* All cells get a border */
+    table, th, td {
+      border: 1px solid #000;
+    }
+
+    /* ── Header row ── */
+    thead th {
+      text-align: center;
+      vertical-align: middle;
+      padding: 4px 3px;
+      font-size: 0.7rem;
+      font-weight: normal;
+      background: #fff;
+      color: #000;
+    }
+
+    thead th .time-top {
+      display: block;
+      font-weight: bold;
+      font-size: 0.72rem;
+    }
+
+    thead th .time-bot {
+      display: block;
+      font-size: 0.65rem;
+      color: #000;
+    }
+
+    /* ── Day column ── */
+    td.day {
+      text-align: center;
+      vertical-align: middle;
+      font-size: 1.9rem;
+      font-weight: bold;
+      color: #000;
+      width: 60px;
+      padding: 4px;
+    }
+
+    /* ── Empty cell ── */
+    td.empty {
+      background: #fff;
+    }
+
+    /* ── Subject cell ── */
+    td.cell {
+      vertical-align: top;
+      padding: 4px 5px;
+      background: #fff;
+      color: #000;
+    }
+
+    .teacher {
+      display: block;
+      font-size: 0.6rem;
+      color: #000;
+      line-height: 1.3;
+      margin-bottom: 3px;
+    }
+
+    .subject {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: bold;
+      color: #000;
+      line-height: 1.3;
+      margin-bottom: 3px;
+      text-align: center;
+    }
+
+    .room {
+      display: block;
+      font-size: 0.62rem;
+      color: #000;
+      text-align: center;
+    }
+
+    /* ── Footer bar ── */
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      color: #000;
+      margin-top: 4px;
+    }
+
+    /* Column widths */
+    col.col-day  { width: 60px; }
+    col.col-time { width: 11.1%; }
+  </style>
+</head>
+<body>
+
+  <div class="air-uni">Air Uni</div>
+  <h1>BSCS-V-B (Shift-I)</h1>
+
+  <table>
+    <colgroup>
+      <col class="col-day" />
+      <col class="col-time" />
+      <col class="col-time" />
+      <col class="col-time" />
+      <col class="col-time" />
+      <col class="col-time" />
+      <col class="col-time" />
+      <col class="col-time" />
+      <col class="col-time" />
+      <col class="col-time" />
+    </colgroup>
+
+    <thead>
+      <tr>
+        <th></th>
+        <th>
+          <span class="time-top">08:00am-09:00am</span>
+          <span class="time-bot">8:00 - 9:00</span>
+        </th>
+        <th>
+          <span class="time-top">09:00am-10:00am</span>
+          <span class="time-bot">9:00 - 10:00</span>
+        </th>
+        <th>
+          <span class="time-top">10:00am-11:00am</span>
+          <span class="time-bot">10:00 - 11:00</span>
+        </th>
+        <th>
+          <span class="time-top">11:00am-12:00pm</span>
+          <span class="time-bot">11:00 - 12:00</span>
+        </th>
+        <th>
+          <span class="time-top">12:00pm-01:00pm</span>
+          <span class="time-bot">12:00 - 1:00</span>
+        </th>
+        <th>
+          <span class="time-top">01:00pm-02:00pm</span>
+          <span class="time-bot">1:00 - 2:00</span>
+        </th>
+        <th>
+          <span class="time-top">02:00pm-03:00pm</span>
+          <span class="time-bot">2:00 - 3:00</span>
+        </th>
+        <th>
+          <span class="time-top">03:00pm-04:00pm</span>
+          <span class="time-bot">3:00 - 4:00</span>
+        </th>
+        <th>
+          <span class="time-top">04:00pm-05:00pm</span>
+          <span class="time-bot">4:00 - 5:00</span>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <!-- ── Monday ── -->
+      <tr>
+        <td class="day">Mo</td>
+        <td class="empty"></td>
+        <td class="cell">
+          <span class="teacher">CS-Mr Hafiz Obiad Ullah Khan</span>
+          <span class="subject">Full Stack Web Development</span>
+          <span class="room">C-205 (Shift-I)</span>
+        </td>
+        <td class="cell">
+          <span class="teacher">Maths-Dr Waqas Sarwar Abbasi</span>
+          <span class="subject">Linear Algebra</span>
+          <span class="room">C-301 (Shift-I)</span>
+        </td>
+        <!-- AI Lab 11am–2pm colspan=3 -->
+        <td class="cell" colspan="3">
+          <span class="teacher">CS-Ms Kanwal Ejaz</span>
+          <span class="subject">Artificial Intelligence Lab</span>
+          <span class="room">Lab 5 A Block (Shift-I)</span>
+        </td>
+        <td class="cell">
+          <span class="teacher">CS-Ms Warda Aslam</span>
+          <span class="subject">Operating Systems</span>
+          <span class="room">C-301 (Shift-I)</span>
+        </td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+      </tr>
+
+      <!-- ── Tuesday ── -->
+      <tr>
+        <td class="day">Tu</td>
+        <td class="cell">
+          <span class="teacher">CS-Ms Warda Aslam</span>
+          <span class="subject">Operating Systems</span>
+          <span class="room">C-206 (Shift-I)</span>
+        </td>
+        <td class="cell">
+          <span class="teacher">CS-Mr Hafiz Obiad Ullah Khan</span>
+          <span class="subject">Full Stack Web Development</span>
+          <span class="room">C-301 (Shift-I)</span>
+        </td>
+        <td class="cell">
+          <span class="teacher">AUSOM-Ms Ayesha Munir-VFM</span>
+          <span class="subject">Introduction to Management</span>
+          <span class="room">C-206 (Shift-I)</span>
+        </td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td class="cell">
+          <span class="teacher">Maths-Dr Waqas Sarwar Abbasi</span>
+          <span class="subject">Linear Algebra</span>
+          <span class="room">C-205 (Shift-I)</span>
+        </td>
+        <td class="cell">
+          <span class="teacher">CS-Ms Kanwal Ejaz</span>
+          <span class="subject">Advisory Class</span>
+          <span class="room">C-201 (Shift-I)</span>
+        </td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+      </tr>
+
+      <!-- ── Wednesday ── -->
+      <tr>
+        <td class="day">We</td>
+        <td class="empty"></td>
+        <!-- DAA 9am–11am colspan=2 -->
+        <td class="cell" colspan="2">
+          <span class="teacher">CS-Dr Mehdi Hassan<br>CS-Mr Muhammad Junaid Nazar</span>
+          <span class="subject">Design and Analysis of Algorithms</span>
+          <span class="room">Lecture Hall 01</span>
+        </td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td class="cell">
+          <span class="teacher">CS-Ms Kanwal Ejaz</span>
+          <span class="subject">Artificial Intelligence</span>
+          <span class="room">C-205 (Shift-I)</span>
+        </td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+      </tr>
+
+      <!-- ── Thursday ── -->
+      <tr>
+        <td class="day">Th</td>
+        <td class="empty"></td>
+        <!-- DAA 9am–11am colspan=2 -->
+        <td class="cell" colspan="2">
+          <span class="teacher">CS-Dr Mehdi Hassan /<br>CS-Mr Muhammad Junaid Nazar</span>
+          <span class="subject">Design and Analysis of Algorithms</span>
+          <span class="room">Lecture Hall 01</span>
+        </td>
+        <!-- OS Lab 11am–2pm colspan=3 -->
+        <td class="cell" colspan="3">
+          <span class="teacher">CS-Ms Warda Aslam</span>
+          <span class="subject">Operating Systems Lab</span>
+          <span class="room">Lab 13 C Block (3rd Floor) (Shift-I)</span>
+        </td>
+        <td class="cell">
+          <span class="teacher">CS-Ms Kanwal Ejaz</span>
+          <span class="subject">Artificial Intelligence</span>
+          <span class="room">C-302 (Shift-I)</span>
+        </td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+      </tr>
+
+      <!-- ── Friday ── -->
+      <tr>
+        <td class="day">Fr</td>
+        <td class="empty"></td>
+        <td class="cell">
+          <span class="teacher">AUSOM-Ms Ayesha Munir-VFM</span>
+          <span class="subject">Introduction to Management</span>
+          <span class="room">C-203 (Shift-I)</span>
+        </td>
+        <td class="cell">
+          <span class="teacher">Maths-Dr Waqas Sarwar Abbasi</span>
+          <span class="subject">Linear Algebra</span>
+          <span class="room">C-203 (Shift-I)</span>
+        </td>
+        <!-- FSWB Lab 11am–2pm colspan=3 -->
+        <td class="cell" colspan="3">
+          <span class="teacher">CS-Mr Hafiz Obiad Ullah Khan</span>
+          <span class="subject">Full Stack Web Development Lab</span>
+          <span class="room">Lab 5 A Block (Shift-I)</span>
+        </td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <span>Timetable generated:03/09/2026</span>
+    <span>aSc Timetables</span>
+  </div>
+
+</body>
+</html>
