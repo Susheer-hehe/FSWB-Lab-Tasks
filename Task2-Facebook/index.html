@@ -1,238 +1,944 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Facebook – log in or sign up</title>
+  <title>Facebook</title>
   <style>
-
-    /* ── Reset ───────────────────────────────────────────── */
+    /* ── Reset ───────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: Helvetica, Arial, sans-serif;
-      background-color: #f0f2f5;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      background: #f0f2f5;
+      color: #050505;
     }
 
-    /* ── Main Content ─────────────────────────────────────── */
-    .main {
+    /* ══════════════════════════════════════════════════
+       NAVBAR
+    ══════════════════════════════════════════════════ */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 56px;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 100;
+    }
+
+    /* Left */
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       flex: 1;
+    }
+
+    .fb-icon {
+      width: 40px; height: 40px;
+      background: #1877f2;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 900;
+      flex-shrink: 0;
+      font-style: italic;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #f0f2f5;
+      border-radius: 20px;
+      padding: 8px 12px;
+      gap: 8px;
+      width: 240px;
+    }
+
+    .search-bar span { font-size: 0.9rem; color: #65676b; }
+    .search-bar input {
+      border: none; background: transparent; outline: none;
+      font-size: 0.93rem; color: #050505; width: 100%;
+    }
+    .search-bar input::placeholder { color: #65676b; }
+
+    /* Center Nav Tabs */
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex: 1.2;
+      justify-content: center;
+    }
+
+    .nav-tab {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 32px;
-      padding: 60px 20px 40px;
-      max-width: 980px;
+      width: 112px;
+      height: 48px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.35rem;
+      color: #65676b;
+      border-bottom: 3px solid transparent;
+      transition: background 0.15s;
+    }
+
+    .nav-tab:hover { background: #f2f2f2; }
+
+    .nav-tab.active {
+      color: #1877f2;
+      border-bottom: 3px solid #1877f2;
+      border-radius: 8px 8px 0 0;
+    }
+
+    /* Right */
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    .nav-btn {
+      width: 40px; height: 40px;
+      background: #e4e6eb;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background 0.15s;
+    }
+
+    .nav-btn:hover { background: #d8dadf; }
+
+    .nav-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: #1877f2;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    /* ══════════════════════════════════════════════════
+       PAGE LAYOUT
+    ══════════════════════════════════════════════════ */
+    .page {
+      display: grid;
+      grid-template-columns: 360px 1fr 360px;
+      gap: 0;
+      padding-top: 56px;
+      min-height: 100vh;
+    }
+
+    /* ══════════════════════════════════════════════════
+       LEFT SIDEBAR
+    ══════════════════════════════════════════════════ */
+    .sidebar-left {
+      padding: 12px 8px;
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+    }
+
+    .sidebar-left::-webkit-scrollbar { width: 0; }
+
+    .sidebar-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 4px;
+    }
+
+    .sidebar-profile:hover { background: #f2f2f2; }
+
+    .sidebar-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: #1877f2;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .sidebar-name { font-size: 0.93rem; font-weight: 600; }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 2px;
+    }
+
+    .sidebar-item:hover { background: #f2f2f2; }
+
+    .sidebar-item-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    .icon-friends  { background: #e7f3ff; color: #1877f2; }
+    .icon-memories { background: #ffe4e6; color: #e41e3f; }
+    .icon-saved    { background: #e7f3ff; color: #1877f2; }
+    .icon-groups   { background: #e6f9f0; color: #44bd87; }
+    .icon-video    { background: #ffe4f0; color: #e81c8a; }
+    .icon-market   { background: #fff3cd; color: #f4a523; }
+    .icon-events   { background: #fce8ff; color: #9b59b6; }
+    .icon-feeds    { background: #e7f3ff; color: #1877f2; }
+
+    .sidebar-item-label { font-size: 0.93rem; font-weight: 400; }
+
+    .sidebar-divider {
+      border: none;
+      border-top: 1px solid #e4e6eb;
+      margin: 8px 0;
+    }
+
+    .sidebar-section-title {
+      padding: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #050505;
+    }
+
+    .see-more {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #050505;
+    }
+
+    .see-more:hover { background: #f2f2f2; }
+
+    .see-more-icon {
+      width: 36px; height: 36px;
+      background: #e4e6eb;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+
+    .sidebar-footer {
+      padding: 8px;
+      font-size: 0.72rem;
+      color: #65676b;
+      line-height: 1.8;
+    }
+
+    .sidebar-footer a {
+      color: #65676b;
+      text-decoration: none;
+      margin-right: 4px;
+    }
+
+    .sidebar-footer a:hover { text-decoration: underline; }
+
+    /* ══════════════════════════════════════════════════
+       CENTER FEED
+    ══════════════════════════════════════════════════ */
+    .feed {
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      max-width: 590px;
       margin: 0 auto;
       width: 100%;
     }
 
-    /* ── Left Side ────────────────────────────────────────── */
-    .left {
+    /* ── Stories ── */
+    .stories-row {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .story-card {
       flex: 1;
-      max-width: 480px;
-      padding-bottom: 60px;
+      height: 200px;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 1px 2px rgba(0,0,0,.1);
     }
 
-    .fb-logo {
-      color: #1877f2;
-      font-size: 3.5rem;
+    .story-bg {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: flex-end;
+      padding: 10px 8px;
+    }
+
+    .story-bg.create {
+      background: #fff;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 12px;
+    }
+
+    .story-add-btn {
+      width: 40px; height: 40px;
+      background: #1877f2;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+      border: 3px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .story-create-label {
+      font-size: 0.78rem;
       font-weight: 700;
-      letter-spacing: -1px;
-      margin-bottom: 16px;
-      line-height: 1;
+      text-align: center;
+      color: #050505;
     }
 
-    .tagline {
-      font-size: 1.42rem;
-      color: #1c1e21;
-      line-height: 1.35;
-      font-weight: 400;
+    .story-top-avatar {
+      position: absolute;
+      top: 10px; left: 10px;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 3px solid #1877f2;
     }
 
-    /* ── Right Side – Card ────────────────────────────────── */
-    .card {
+    .story-name {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    }
+
+    .s1 { background: linear-gradient(160deg, #4facfe, #00f2fe); }
+    .s2 { background: linear-gradient(160deg, #f093fb, #f5576c); }
+    .s3 { background: linear-gradient(160deg, #4ade80, #22c55e); }
+    .s4 { background: linear-gradient(160deg, #fa709a, #fee140); }
+    .s5 { background: linear-gradient(160deg, #a18cd1, #fbc2eb); }
+
+    .story-avatar-mini {
+      position: absolute;
+      top: 10px; left: 10px;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: 3px solid #1877f2;
+      color: #1877f2;
+    }
+
+    /* ── Create Post Card ── */
+    .post-box {
       background: #fff;
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,.1), 0 8px 16px rgba(0,0,0,.1);
-      padding: 20px 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.1);
+      padding: 12px 16px;
       width: 100%;
-      max-width: 396px;
     }
 
-    .card input[type="text"],
-    .card input[type="email"],
-    .card input[type="password"] {
-      width: 100%;
-      padding: 14px 16px;
-      border: 1px solid #dddfe2;
-      border-radius: 6px;
-      font-size: 1rem;
-      color: #1c1e21;
-      margin-bottom: 12px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .card input:focus {
-      border-color: #1877f2;
-      box-shadow: 0 0 0 2px rgba(24,119,242,0.2);
-    }
-
-    .btn-login {
-      width: 100%;
-      background-color: #1877f2;
-      color: #fff;
-      font-size: 1.25rem;
-      font-weight: 700;
-      border: none;
-      border-radius: 6px;
-      padding: 14px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .btn-login:hover { background-color: #166fe5; }
-
-    .forgot {
-      display: block;
-      text-align: center;
-      margin-top: 16px;
-      font-size: 0.875rem;
-      color: #1877f2;
-      text-decoration: none;
-    }
-
-    .forgot:hover { text-decoration: underline; }
-
-    .divider {
-      border: none;
-      border-top: 1px solid #dadde1;
-      margin: 20px 0;
-    }
-
-    .btn-create {
-      display: block;
-      width: fit-content;
-      margin: 0 auto;
-      background-color: #42b72a;
-      color: #fff;
-      font-size: 1.06rem;
-      font-weight: 700;
-      border: none;
-      border-radius: 6px;
-      padding: 14px 26px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .btn-create:hover { background-color: #36a420; }
-
-    /* ── Footer ───────────────────────────────────────────── */
-    footer {
-      padding: 16px 20px 28px;
-      border-top: none;
-    }
-
-    .footer-links {
+    .post-box-top {
       display: flex;
-      flex-wrap: wrap;
-      gap: 6px 12px;
-      justify-content: center;
-      margin-bottom: 12px;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
     }
 
-    .footer-links a {
+    .post-box-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: #1877f2;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .post-box-input {
+      flex: 1;
+      background: #f0f2f5;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 16px;
+      font-size: 0.95rem;
+      color: #65676b;
+      cursor: pointer;
+      outline: none;
+      text-align: left;
+    }
+
+    .post-box-input:hover { background: #e4e6eb; }
+
+    .post-box-divider {
+      border: none;
+      border-top: 1px solid #e4e6eb;
+      margin-bottom: 8px;
+    }
+
+    .post-box-actions {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .post-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.87rem;
+      font-weight: 600;
+      color: #65676b;
+    }
+
+    .post-action-btn:hover { background: #f2f2f2; }
+
+    .post-action-btn span.icon { font-size: 1.2rem; }
+
+    /* ── Feed Post Card ── */
+    .post-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.1);
+      width: 100%;
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px 0;
+    }
+
+    .post-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .post-meta { flex: 1; }
+
+    .post-author {
+      font-size: 0.93rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .post-author:hover { text-decoration: underline; }
+
+    .post-time {
       font-size: 0.78rem;
-      color: #737373;
-      text-decoration: none;
+      color: #65676b;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    .footer-links a:hover { text-decoration: underline; }
-
-    .footer-copy {
-      text-align: center;
-      font-size: 0.75rem;
-      color: #737373;
+    .post-more {
+      font-size: 1.3rem;
+      color: #65676b;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 50%;
     }
 
+    .post-more:hover { background: #f2f2f2; }
+
+    .post-text {
+      padding: 10px 16px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .post-image {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .post-image-placeholder {
+      width: 100%;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .post-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px;
+      font-size: 0.87rem;
+      color: #65676b;
+    }
+
+    .post-reactions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .reaction-icons { font-size: 1rem; }
+
+    .post-stat-divider {
+      border: none;
+      border-top: 1px solid #e4e6eb;
+      margin: 0 16px;
+    }
+
+    .post-actions {
+      display: flex;
+      justify-content: space-around;
+      padding: 4px 8px;
+    }
+
+    .post-action {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      justify-content: center;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.87rem;
+      font-weight: 600;
+      color: #65676b;
+    }
+
+    .post-action:hover { background: #f2f2f2; }
+
+    /* ══════════════════════════════════════════════════
+       RIGHT SIDEBAR
+    ══════════════════════════════════════════════════ */
+    .sidebar-right {
+      padding: 24px 8px;
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+    }
+
+    .sidebar-right::-webkit-scrollbar { width: 0; }
+
+    .right-section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #050505;
+      margin-bottom: 8px;
+      padding: 0 8px;
+    }
+
+    /* Sponsored */
+    .sponsored-card {
+      display: flex;
+      gap: 10px;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 4px;
+    }
+
+    .sponsored-card:hover { background: #f2f2f2; }
+
+    .sponsored-img {
+      width: 108px;
+      height: 108px;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+
+    .sponsored-info { flex: 1; }
+    .sponsored-name { font-size: 0.87rem; font-weight: 600; margin-bottom: 2px; }
+    .sponsored-url  { font-size: 0.78rem; color: #65676b; margin-bottom: 4px; }
+    .sponsored-desc { font-size: 0.78rem; color: #65676b; }
+    .sponsored-label { font-size: 0.72rem; color: #65676b; padding: 0 8px; margin-bottom: 12px; }
+
+    .right-divider {
+      border: none;
+      border-top: 1px solid #e4e6eb;
+      margin: 12px 8px;
+    }
+
+    /* Contacts */
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 2px;
+    }
+
+    .contact-item:hover { background: #f2f2f2; }
+
+    .contact-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 0.82rem;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .contact-avatar::after {
+      content: '';
+      position: absolute;
+      bottom: 1px; right: 1px;
+      width: 10px; height: 10px;
+      background: #44bd87;
+      border-radius: 50%;
+      border: 2px solid #fff;
+    }
+
+    .contact-name { font-size: 0.93rem; font-weight: 400; }
   </style>
 </head>
 <body>
 
-  <!-- ── Main ─────────────────────────────────────────────── -->
-  <div class="main">
-
+  <!-- ══ NAVBAR ══════════════════════════════════════════ -->
+  <nav class="navbar">
     <!-- Left -->
-    <div class="left">
-      <div class="fb-logo">facebook</div>
-      <p class="tagline">Facebook helps you connect and share with the people in your life.</p>
+    <div class="nav-left">
+      <div class="fb-icon">f</div>
+      <div class="search-bar">
+        <span>🔍</span>
+        <input type="text" placeholder="Search Facebook"/>
+      </div>
     </div>
 
-    <!-- Right – Login Card -->
-    <div class="card">
-      <input type="text" placeholder="Email address or phone number" />
-      <input type="password" placeholder="Password" />
-      <button class="btn-login">Log in</button>
-      <a href="#" class="forgot">Forgotten password?</a>
-      <hr class="divider" />
-      <button class="btn-create">Create new account</button>
+    <!-- Center Tabs -->
+    <div class="nav-center">
+      <div class="nav-tab active" title="Home">🏠</div>
+      <div class="nav-tab" title="Friends">👥</div>
+      <div class="nav-tab" title="Watch">📺</div>
+      <div class="nav-tab" title="Marketplace">🏪</div>
+      <div class="nav-tab" title="Groups">⬛</div>
     </div>
 
+    <!-- Right -->
+    <div class="nav-right">
+      <div class="nav-avatar">SH</div>
+      <div class="nav-btn" title="Messenger">💬</div>
+      <div class="nav-btn" title="Notifications">🔔</div>
+      <div class="nav-btn" title="Menu">⋯</div>
+    </div>
+  </nav>
+
+  <!-- ══ PAGE LAYOUT ══════════════════════════════════════ -->
+  <div class="page">
+
+    <!-- ══ LEFT SIDEBAR ══════════════════════════════════ -->
+    <aside class="sidebar-left">
+
+      <div class="sidebar-profile">
+        <div class="sidebar-avatar">SH</div>
+        <span class="sidebar-name">Susheer Hehe</span>
+      </div>
+
+      <div class="sidebar-item">
+        <div class="sidebar-item-icon icon-friends">👥</div>
+        <span class="sidebar-item-label">Friends</span>
+      </div>
+      <div class="sidebar-item">
+        <div class="sidebar-item-icon icon-memories">🕐</div>
+        <span class="sidebar-item-label">Memories</span>
+      </div>
+      <div class="sidebar-item">
+        <div class="sidebar-item-icon icon-saved">🔖</div>
+        <span class="sidebar-item-label">Saved</span>
+      </div>
+      <div class="sidebar-item">
+        <div class="sidebar-item-icon icon-groups">⬛</div>
+        <span class="sidebar-item-label">Groups</span>
+      </div>
+      <div class="sidebar-item">
+        <div class="sidebar-item-icon icon-video">▶️</div>
+        <span class="sidebar-item-label">Video</span>
+      </div>
+      <div class="sidebar-item">
+        <div class="sidebar-item-icon icon-market">🏪</div>
+        <span class="sidebar-item-label">Marketplace</span>
+      </div>
+      <div class="sidebar-item">
+        <div class="sidebar-item-icon icon-feeds">📰</div>
+        <span class="sidebar-item-label">Feeds</span>
+      </div>
+      <div class="sidebar-item">
+        <div class="sidebar-item-icon icon-events">📅</div>
+        <span class="sidebar-item-label">Events</span>
+      </div>
+
+      <div class="see-more">
+        <div class="see-more-icon">▾</div>
+        <span class="sidebar-item-label">See more</span>
+      </div>
+
+      <hr class="sidebar-divider"/>
+      <div class="sidebar-section-title">Your shortcuts</div>
+
+      <div class="sidebar-item">
+        <div class="sidebar-item-icon" style="background:#e7f3ff; font-size:1.3rem;">🎮</div>
+        <span class="sidebar-item-label">Gaming</span>
+      </div>
+      <div class="sidebar-item">
+        <div class="sidebar-item-icon" style="background:#fce8ff; font-size:1.3rem;">🎓</div>
+        <span class="sidebar-item-label">Air University CS</span>
+      </div>
+
+      <hr class="sidebar-divider"/>
+      <div class="sidebar-footer">
+        <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Advertising</a>
+        <a href="#">Ad choices</a><a href="#">Cookies</a><a href="#">More</a><br/>
+        Meta &copy; 2026
+      </div>
+    </aside>
+
+    <!-- ══ CENTER FEED ═══════════════════════════════════ -->
+    <main>
+      <div class="feed">
+
+        <!-- Stories -->
+        <div class="stories-row">
+          <!-- Create Story -->
+          <div class="story-card">
+            <div class="story-bg create">
+              <div style="flex:1; background:#e4e6eb; width:100%;"></div>
+              <div class="story-add-btn">+</div>
+              <span class="story-create-label">Create story</span>
+            </div>
+          </div>
+          <!-- Friend Stories -->
+          <div class="story-card">
+            <div class="story-bg s1" style="height:100%;">
+              <div class="story-avatar-mini">AK</div>
+              <span class="story-name">Ahmed K.</span>
+            </div>
+          </div>
+          <div class="story-card">
+            <div class="story-bg s2" style="height:100%;">
+              <div class="story-avatar-mini">SR</div>
+              <span class="story-name">Sara R.</span>
+            </div>
+          </div>
+          <div class="story-card">
+            <div class="story-bg s3" style="height:100%;">
+              <div class="story-avatar-mini">MJ</div>
+              <span class="story-name">M. Junaid</span>
+            </div>
+          </div>
+          <div class="story-card">
+            <div class="story-bg s4" style="height:100%;">
+              <div class="story-avatar-mini">ZA</div>
+              <span class="story-name">Zara A.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Create Post Box -->
+        <div class="post-box">
+          <div class="post-box-top">
+            <div class="post-box-avatar">SH</div>
+            <input class="post-box-input" type="text" placeholder="What's on your mind, Susheer?" readonly/>
+          </div>
+          <hr class="post-box-divider"/>
+          <div class="post-box-actions">
+            <div class="post-action-btn">
+              <span class="icon">🎬</span> Live video
+            </div>
+            <div class="post-action-btn">
+              <span class="icon">🖼️</span> Photo/video
+            </div>
+            <div class="post-action-btn">
+              <span class="icon">😊</span> Feeling/activity
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Post 1 ── -->
+        <div class="post-card">
+          <div class="post-header">
+            <div class="post-avatar" style="background:#e85d04;">AK</div>
+            <div class="post-meta">
+              <div class="post-author">Ahmed Khan</div>
+              <div class="post-time">2 h · 🌐</div>
+            </div>
+            <div class="post-more">···</div>
+          </div>
+          <div class="post-text">
+            Just finished my FSWB lab task — building a timetable in pure HTML &amp; CSS was actually fun 😄 
+            shoutout to the whole BSCS-V-B squad 🔥
+          </div>
+          <div class="post-image-placeholder" style="background:#dbeafe;">🖥️</div>
+          <div class="post-stats">
+            <div class="post-reactions">
+              <span class="reaction-icons">👍❤️😂</span>
+              <span style="margin-left:4px;">847</span>
+            </div>
+            <div>132 comments · 48 shares</div>
+          </div>
+          <hr class="post-stat-divider"/>
+          <div class="post-actions">
+            <div class="post-action">👍 Like</div>
+            <div class="post-action">💬 Comment</div>
+            <div class="post-action">↗️ Share</div>
+          </div>
+        </div>
+
+        <!-- ── Post 2 ── -->
+        <div class="post-card">
+          <div class="post-header">
+            <div class="post-avatar" style="background:#7c3aed;">SR</div>
+            <div class="post-meta">
+              <div class="post-author">Sara Rehman</div>
+              <div class="post-time">5 h · 👥</div>
+            </div>
+            <div class="post-more">···</div>
+          </div>
+          <div class="post-text">
+            Islamabad weather today is absolutely perfect ☁️❄️ 
+            someone come with me to F-9 park rn
+          </div>
+          <div class="post-image-placeholder" style="background:#dcfce7;">🌳</div>
+          <div class="post-stats">
+            <div class="post-reactions">
+              <span class="reaction-icons">❤️😍👍</span>
+              <span style="margin-left:4px;">2.1K</span>
+            </div>
+            <div>214 comments · 76 shares</div>
+          </div>
+          <hr class="post-stat-divider"/>
+          <div class="post-actions">
+            <div class="post-action">👍 Like</div>
+            <div class="post-action">💬 Comment</div>
+            <div class="post-action">↗️ Share</div>
+          </div>
+        </div>
+
+        <!-- ── Post 3 ── -->
+        <div class="post-card">
+          <div class="post-header">
+            <div class="post-avatar" style="background:#059669;">MJ</div>
+            <div class="post-meta">
+              <div class="post-author">Muhammad Junaid</div>
+              <div class="post-time">Yesterday at 11:30 PM · 🌐</div>
+            </div>
+            <div class="post-more">···</div>
+          </div>
+          <div class="post-text">
+            DAA exam next week 😭 anyone has good notes for NP-completeness? Lecture Hall 01 hits different at 9am 💀
+          </div>
+          <div class="post-stats">
+            <div class="post-reactions">
+              <span class="reaction-icons">😭😂👍</span>
+              <span style="margin-left:4px;">312</span>
+            </div>
+            <div>89 comments · 12 shares</div>
+          </div>
+          <hr class="post-stat-divider"/>
+          <div class="post-actions">
+            <div class="post-action">👍 Like</div>
+            <div class="post-action">💬 Comment</div>
+            <div class="post-action">↗️ Share</div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- ══ RIGHT SIDEBAR ══════════════════════════════════ -->
+    <aside class="sidebar-right">
+
+      <div class="right-section-title">Sponsored</div>
+
+      <div class="sponsored-card">
+        <div class="sponsored-img" style="background:#dbeafe;">💻</div>
+        <div class="sponsored-info">
+          <div class="sponsored-name">Coursera</div>
+          <div class="sponsored-url">coursera.org</div>
+          <div class="sponsored-desc">Learn Web Development. Earn a certificate today.</div>
+        </div>
+      </div>
+      <div class="sponsored-label">Sponsored</div>
+
+      <div class="sponsored-card">
+        <div class="sponsored-img" style="background:#fef9c3;">📱</div>
+        <div class="sponsored-info">
+          <div class="sponsored-name">Samsung Pakistan</div>
+          <div class="sponsored-url">samsung.com/pk</div>
+          <div class="sponsored-desc">Galaxy S25 — Capture every moment in stunning detail.</div>
+        </div>
+      </div>
+      <div class="sponsored-label">Sponsored</div>
+
+      <hr class="right-divider"/>
+      <div class="right-section-title">Contacts</div>
+
+      <div class="contact-item">
+        <div class="contact-avatar" style="background:#e85d04;">AK</div>
+        <span class="contact-name">Ahmed Khan</span>
+      </div>
+      <div class="contact-item">
+        <div class="contact-avatar" style="background:#7c3aed;">SR</div>
+        <span class="contact-name">Sara Rehman</span>
+      </div>
+      <div class="contact-item">
+        <div class="contact-avatar" style="background:#059669;">MJ</div>
+        <span class="contact-name">Muhammad Junaid</span>
+      </div>
+      <div class="contact-item">
+        <div class="contact-avatar" style="background:#0891b2;">ZA</div>
+        <span class="contact-name">Zara Akhtar</span>
+      </div>
+      <div class="contact-item">
+        <div class="contact-avatar" style="background:#be185d;">NF</div>
+        <span class="contact-name">Noor Fatima</span>
+      </div>
+      <div class="contact-item">
+        <div class="contact-avatar" style="background:#b45309;">UR</div>
+        <span class="contact-name">Usman Raza</span>
+      </div>
+
+    </aside>
   </div>
-
-  <!-- ── Footer ───────────────────────────────────────────── -->
-  <footer>
-    <div class="footer-links">
-      <a href="#">English (UK)</a>
-      <a href="#">Français (France)</a>
-      <a href="#">Deutsch</a>
-      <a href="#">中文(简体)</a>
-      <a href="#">العربية</a>
-      <a href="#">Español</a>
-      <a href="#">Português (Brasil)</a>
-      <a href="#">Italiano</a>
-      <a href="#">한국어</a>
-      <a href="#">日本語</a>
-    </div>
-    <div class="footer-links">
-      <a href="#">Sign Up</a>
-      <a href="#">Log in</a>
-      <a href="#">Messenger</a>
-      <a href="#">Facebook Lite</a>
-      <a href="#">Video</a>
-      <a href="#">Places</a>
-      <a href="#">Games</a>
-      <a href="#">Marketplace</a>
-      <a href="#">Meta Pay</a>
-      <a href="#">Meta Store</a>
-      <a href="#">Meta Quest</a>
-      <a href="#">Instagram</a>
-      <a href="#">Threads</a>
-      <a href="#">Fundraisers</a>
-      <a href="#">Services</a>
-      <a href="#">Voting Information Centre</a>
-      <a href="#">Privacy Policy</a>
-      <a href="#">Privacy Centre</a>
-      <a href="#">Groups</a>
-      <a href="#">About</a>
-      <a href="#">Create ad</a>
-      <a href="#">Create Page</a>
-      <a href="#">Developers</a>
-      <a href="#">Careers</a>
-      <a href="#">Cookies</a>
-      <a href="#">Ad choices</a>
-      <a href="#">Terms</a>
-      <a href="#">Help</a>
-      <a href="#">Contact uploading and non-users</a>
-      <a href="#">Settings</a>
-      <a href="#">Activity log</a>
-    </div>
-    <p class="footer-copy">Meta &copy; 2026</p>
-  </footer>
 
 </body>
 </html>
