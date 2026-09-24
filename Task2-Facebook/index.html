@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Facebook – log in or sign up</title>
+  <style>
+
+    /* ── Reset ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      background-color: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Main Content ─────────────────────────────────────── */
+    .main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      padding: 60px 20px 40px;
+      max-width: 980px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── Left Side ────────────────────────────────────────── */
+    .left {
+      flex: 1;
+      max-width: 480px;
+      padding-bottom: 60px;
+    }
+
+    .fb-logo {
+      color: #1877f2;
+      font-size: 3.5rem;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+
+    .tagline {
+      font-size: 1.42rem;
+      color: #1c1e21;
+      line-height: 1.35;
+      font-weight: 400;
+    }
+
+    /* ── Right Side – Card ────────────────────────────────── */
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,.1), 0 8px 16px rgba(0,0,0,.1);
+      padding: 20px 16px;
+      width: 100%;
+      max-width: 396px;
+    }
+
+    .card input[type="text"],
+    .card input[type="email"],
+    .card input[type="password"] {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #dddfe2;
+      border-radius: 6px;
+      font-size: 1rem;
+      color: #1c1e21;
+      margin-bottom: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .card input:focus {
+      border-color: #1877f2;
+      box-shadow: 0 0 0 2px rgba(24,119,242,0.2);
+    }
+
+    .btn-login {
+      width: 100%;
+      background-color: #1877f2;
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 6px;
+      padding: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-login:hover { background-color: #166fe5; }
+
+    .forgot {
+      display: block;
+      text-align: center;
+      margin-top: 16px;
+      font-size: 0.875rem;
+      color: #1877f2;
+      text-decoration: none;
+    }
+
+    .forgot:hover { text-decoration: underline; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #dadde1;
+      margin: 20px 0;
+    }
+
+    .btn-create {
+      display: block;
+      width: fit-content;
+      margin: 0 auto;
+      background-color: #42b72a;
+      color: #fff;
+      font-size: 1.06rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 6px;
+      padding: 14px 26px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-create:hover { background-color: #36a420; }
+
+    /* ── Footer ───────────────────────────────────────────── */
+    footer {
+      padding: 16px 20px 28px;
+      border-top: none;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 12px;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .footer-links a {
+      font-size: 0.78rem;
+      color: #737373;
+      text-decoration: none;
+    }
+
+    .footer-links a:hover { text-decoration: underline; }
+
+    .footer-copy {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #737373;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ── Main ─────────────────────────────────────────────── -->
+  <div class="main">
+
+    <!-- Left -->
+    <div class="left">
+      <div class="fb-logo">facebook</div>
+      <p class="tagline">Facebook helps you connect and share with the people in your life.</p>
+    </div>
+
+    <!-- Right – Login Card -->
+    <div class="card">
+      <input type="text" placeholder="Email address or phone number" />
+      <input type="password" placeholder="Password" />
+      <button class="btn-login">Log in</button>
+      <a href="#" class="forgot">Forgotten password?</a>
+      <hr class="divider" />
+      <button class="btn-create">Create new account</button>
+    </div>
+
+  </div>
+
+  <!-- ── Footer ───────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-links">
+      <a href="#">English (UK)</a>
+      <a href="#">Français (France)</a>
+      <a href="#">Deutsch</a>
+      <a href="#">中文(简体)</a>
+      <a href="#">العربية</a>
+      <a href="#">Español</a>
+      <a href="#">Português (Brasil)</a>
+      <a href="#">Italiano</a>
+      <a href="#">한국어</a>
+      <a href="#">日本語</a>
+    </div>
+    <div class="footer-links">
+      <a href="#">Sign Up</a>
+      <a href="#">Log in</a>
+      <a href="#">Messenger</a>
+      <a href="#">Facebook Lite</a>
+      <a href="#">Video</a>
+      <a href="#">Places</a>
+      <a href="#">Games</a>
+      <a href="#">Marketplace</a>
+      <a href="#">Meta Pay</a>
+      <a href="#">Meta Store</a>
+      <a href="#">Meta Quest</a>
+      <a href="#">Instagram</a>
+      <a href="#">Threads</a>
+      <a href="#">Fundraisers</a>
+      <a href="#">Services</a>
+      <a href="#">Voting Information Centre</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Privacy Centre</a>
+      <a href="#">Groups</a>
+      <a href="#">About</a>
+      <a href="#">Create ad</a>
+      <a href="#">Create Page</a>
+      <a href="#">Developers</a>
+      <a href="#">Careers</a>
+      <a href="#">Cookies</a>
+      <a href="#">Ad choices</a>
+      <a href="#">Terms</a>
+      <a href="#">Help</a>
+      <a href="#">Contact uploading and non-users</a>
+      <a href="#">Settings</a>
+      <a href="#">Activity log</a>
+    </div>
+    <p class="footer-copy">Meta &copy; 2026</p>
+  </footer>
+
+</body>
+</html>
