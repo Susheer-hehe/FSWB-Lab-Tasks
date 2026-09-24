@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IEEE Paper Template</title>
+  <style>
+
+    /* ── Page Setup ─────────────────────────────────────── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #d0d0d0;
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 10pt;
+      color: #000;
+    }
+
+    /* A4 page container */
+    .page {
+      width: 8.5in;
+      min-height: 11in;
+      background: #fff;
+      margin: 24px auto;
+      padding: 0.75in 0.625in 1in;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+    }
+
+    /* ── Title Block (full width) ───────────────────────── */
+    .title-block {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .paper-title {
+      font-size: 24pt;
+      font-weight: bold;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .authors {
+      font-size: 11pt;
+      margin-bottom: 4px;
+    }
+
+    .affiliations {
+      font-size: 9pt;
+      font-style: italic;
+      color: #333;
+      margin-bottom: 2px;
+    }
+
+    .emails {
+      font-size: 9pt;
+      color: #333;
+    }
+
+    /* ── Abstract (full width, indented) ───────────────── */
+    .abstract-block {
+      margin: 12px 0.5in;
+    }
+
+    .abstract-label {
+      font-style: italic;
+      font-weight: bold;
+      display: inline;
+    }
+
+    .abstract-text {
+      display: inline;
+      font-size: 9pt;
+      text-align: justify;
+    }
+
+    .index-terms {
+      margin: 6px 0.5in 0;
+      font-size: 9pt;
+    }
+
+    .index-terms-label {
+      font-style: italic;
+      font-weight: bold;
+    }
+
+    /* ── Full-Width Divider ─────────────────────────────── */
+    .full-rule {
+      border: none;
+      border-top: 1px solid #000;
+      margin: 12px 0;
+    }
+
+    /* ── Two-Column Body ────────────────────────────────── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 0.25in;
+      column-fill: balance;
+    }
+
+    /* ── Section Headings ───────────────────────────────── */
+    .section-heading {
+      font-size: 10pt;
+      font-weight: bold;
+      text-align: center;
+      text-transform: uppercase;
+      margin: 10px 0 6px;
+    }
+
+    .subsection-heading {
+      font-size: 10pt;
+      font-style: italic;
+      font-weight: bold;
+      margin: 8px 0 4px;
+    }
+
+    /* ── Body Text ──────────────────────────────────────── */
+    p {
+      font-size: 10pt;
+      text-align: justify;
+      line-height: 1.4;
+      margin-bottom: 6px;
+      text-indent: 0.2in;
+    }
+
+    p.no-indent { text-indent: 0; }
+
+    /* ── Figure ─────────────────────────────────────────── */
+    .figure {
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    .figure-box {
+      width: 100%;
+      height: 110px;
+      background: #f5f5f5;
+      border: 1px solid #999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9pt;
+      color: #666;
+      font-style: italic;
+    }
+
+    .fig-caption {
+      font-size: 8.5pt;
+      margin-top: 4px;
+      text-align: center;
+      text-indent: 0;
+    }
+
+    .fig-label { font-weight: bold; }
+
+    /* ── Table ──────────────────────────────────────────── */
+    .table-wrapper {
+      margin: 10px 0;
+    }
+
+    .table-caption {
+      font-size: 8.5pt;
+      text-align: center;
+      margin-bottom: 4px;
+      text-indent: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .table-caption .table-label { font-weight: bold; }
+
+    table.ieee {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9pt;
+    }
+
+    table.ieee th, table.ieee td {
+      border: 1px solid #000;
+      padding: 3px 6px;
+      text-align: center;
+    }
+
+    table.ieee thead th {
+      background: #e8e8e8;
+      font-weight: bold;
+    }
+
+    /* ── Equation ───────────────────────────────────────── */
+    .equation {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 8px 0;
+      position: relative;
+      text-indent: 0;
+    }
+
+    .eq-body {
+      font-style: italic;
+      font-size: 10.5pt;
+    }
+
+    .eq-number {
+      position: absolute;
+      right: 0;
+      font-size: 10pt;
+    }
+
+    /* ── References ─────────────────────────────────────── */
+    .references {
+      margin-top: 4px;
+    }
+
+    .ref-item {
+      font-size: 8.5pt;
+      text-align: justify;
+      padding-left: 0.2in;
+      text-indent: -0.2in;
+      margin-bottom: 4px;
+    }
+
+    /* Span two columns for References heading */
+    .span-col {
+      grid-column: 1 / -1;
+    }
+
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ TITLE BLOCK ══════════════════════════════════════ -->
+  <div class="title-block">
+    <div class="paper-title">
+      Deep Learning-Based Intrusion Detection System<br/>
+      for IoT Networks: A Comparative Study
+    </div>
+    <div class="authors">
+      Muhammad Susheer Hehe<sup>1</sup>,
+      Sara Rehman<sup>2</sup>,
+      Ahmed Khan<sup>1</sup>
+    </div>
+    <div class="affiliations">
+      <sup>1</sup>Department of Computer Science, Air University, Islamabad, Pakistan
+    </div>
+    <div class="affiliations">
+      <sup>2</sup>Department of Electrical Engineering, NUST, Islamabad, Pakistan
+    </div>
+    <div class="emails">
+      {susheer.hehe, ahmed.khan}@mail.au.edu.pk &nbsp;|&nbsp; sara.rehman@nust.edu.pk
+    </div>
+  </div>
+
+  <!-- ══ ABSTRACT ════════════════════════════════════════ -->
+  <div class="abstract-block">
+    <span class="abstract-label">Abstract—</span>
+    <span class="abstract-text">
+      The proliferation of Internet of Things (IoT) devices has introduced 
+      significant vulnerabilities to modern network infrastructure. Traditional 
+      intrusion detection systems (IDS) often fail to keep pace with the 
+      dynamic and heterogeneous nature of IoT environments. In this paper, 
+      we propose a deep learning-based IDS framework that leverages convolutional 
+      neural networks (CNN) and long short-term memory (LSTM) architectures to 
+      detect malicious network traffic with high accuracy. We evaluate our approach 
+      on the NSL-KDD and UNSW-NB15 benchmark datasets and demonstrate that our 
+      hybrid model achieves a detection accuracy of 98.7%, outperforming existing 
+      state-of-the-art methods by a margin of 3.2%.
+    </span>
+  </div>
+  <div class="index-terms">
+    <span class="index-terms-label">Index Terms—</span>
+    Intrusion Detection, Internet of Things, Deep Learning, CNN, LSTM, Network Security.
+  </div>
+
+  <hr class="full-rule"/>
+
+  <!-- ══ TWO-COLUMN BODY ══════════════════════════════════ -->
+  <div class="two-col">
+
+    <!-- ─ COLUMN 1 ─────────────────────────────────────── -->
+    <div>
+
+      <!-- I. Introduction -->
+      <div class="section-heading">I. Introduction</div>
+      <p>The rapid expansion of Internet of Things (IoT) ecosystems has resulted 
+      in billions of connected devices that generate and transmit sensitive data 
+      across global networks. According to Statista, the number of active IoT 
+      connections is projected to exceed 29 billion by 2030 [1]. This exponential 
+      growth presents unprecedented challenges for cybersecurity practitioners.</p>
+
+      <p>Conventional signature-based intrusion detection systems rely on predefined 
+      rule sets that are inherently limited in their capacity to detect novel or 
+      zero-day attacks. Anomaly-based systems offer greater flexibility but often 
+      suffer from high false positive rates. Machine learning approaches have 
+      emerged as promising alternatives, yet they frequently underperform on 
+      high-dimensional, imbalanced traffic datasets.</p>
+
+      <p>In this work, we propose a hybrid deep learning model that combines the 
+      spatial feature extraction capability of convolutional neural networks with 
+      the temporal modeling strength of long short-term memory networks. Our 
+      contributions are summarized as follows:</p>
+
+      <p class="no-indent" style="text-indent:0; padding-left:0.15in;">
+        &bull; A novel CNN-LSTM hybrid architecture optimized for IoT traffic classification.<br/>
+        &bull; Comprehensive evaluation on two public benchmark datasets.<br/>
+        &bull; A feature selection strategy that reduces input dimensionality by 40%.
+      </p>
+
+      <!-- II. Related Work -->
+      <div class="section-heading">II. Related Work</div>
+      <p>Intrusion detection for IoT networks has been studied extensively in recent 
+      literature. Diro and Chilamkurti [2] proposed a distributed deep learning 
+      framework for IoT attack detection, achieving competitive performance on the 
+      NSL-KDD dataset. Similarly, Anthi et al. [3] introduced a supervised 
+      learning approach tailored for smart home environments.</p>
+
+      <div class="subsection-heading">A. Machine Learning Approaches</div>
+      <p>Early machine learning-based IDS employed classical algorithms such as 
+      Support Vector Machines (SVM), Random Forests, and Naive Bayes. While 
+      effective for well-defined feature spaces, these methods require significant 
+      feature engineering and struggle with evolving attack patterns.</p>
+
+      <div class="subsection-heading">B. Deep Learning Approaches</div>
+      <p>Recurrent architectures, particularly LSTM networks, have demonstrated 
+      superior performance in sequential data modeling tasks. Kim et al. [4] 
+      applied LSTM to network flow classification with an accuracy of 95.6%. 
+      Convolutional approaches have also been explored for spatial packet feature 
+      extraction [5].</p>
+
+      <!-- Figure -->
+      <div class="figure">
+        <div class="figure-box">[ System Architecture Diagram ]</div>
+        <p class="fig-caption no-indent">
+          <span class="fig-label">Fig. 1.</span> Proposed CNN-LSTM hybrid IDS architecture.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- ─ COLUMN 2 ─────────────────────────────────────── -->
+    <div>
+
+      <!-- III. Proposed Methodology -->
+      <div class="section-heading">III. Proposed Methodology</div>
+      <p>Our proposed system operates in three primary stages: data preprocessing, 
+      feature extraction, and classification. Raw network traffic is first captured 
+      and converted into structured flow records. Categorical features are 
+      one-hot encoded while numerical features are normalized using Min-Max scaling.</p>
+
+      <div class="subsection-heading">A. Feature Selection</div>
+      <p>We apply a mutual information-based feature selection strategy to identify 
+      the most discriminative features. From the original 41 features in NSL-KDD, 
+      our method retains 24 features, reducing computational overhead while 
+      maintaining classification performance.</p>
+
+      <div class="subsection-heading">B. Model Architecture</div>
+      <p>The CNN component consists of two 1D convolutional layers with 64 and 128 
+      filters respectively, each followed by batch normalization and max-pooling. 
+      The extracted feature maps are then fed into a two-layer LSTM network with 
+      128 hidden units. The final classification layer employs softmax activation:</p>
+
+      <!-- Equation -->
+      <div class="equation">
+        <span class="eq-body">
+          P(y<sub>k</sub> | <b>x</b>) = e<sup>z<sub>k</sub></sup> / &sum;<sub>j</sub> e<sup>z<sub>j</sub></sup>
+        </span>
+        <span class="eq-number">(1)</span>
+      </div>
+
+      <p class="no-indent">where <i>z<sub>k</sub></i> represents the logit output 
+      for class <i>k</i> and <b>x</b> denotes the input feature vector.</p>
+
+      <!-- IV. Experimental Results -->
+      <div class="section-heading">IV. Experimental Results</div>
+      <p>We evaluated the proposed model on two widely adopted benchmark datasets: 
+      NSL-KDD and UNSW-NB15. All experiments were conducted on an NVIDIA RTX 3090 
+      GPU using Python 3.10, TensorFlow 2.11, and scikit-learn 1.2.</p>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <p class="table-caption no-indent">
+          <span class="table-label">Table I.</span> Performance Comparison on NSL-KDD
+        </p>
+        <table class="ieee">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Accuracy (%)</th>
+              <th>Precision</th>
+              <th>F1-Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>SVM [2]</td><td>91.4</td><td>0.902</td><td>0.908</td></tr>
+            <tr><td>Random Forest [3]</td><td>93.2</td><td>0.924</td><td>0.929</td></tr>
+            <tr><td>LSTM [4]</td><td>95.6</td><td>0.948</td><td>0.951</td></tr>
+            <tr><td>CNN [5]</td><td>96.1</td><td>0.955</td><td>0.958</td></tr>
+            <tr><td><b>Proposed</b></td><td><b>98.7</b></td><td><b>0.981</b></td><td><b>0.984</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>As shown in Table I, our proposed CNN-LSTM model outperforms all baseline 
+      methods across all evaluation metrics. The improvement in F1-score is 
+      particularly significant, indicating better handling of the class imbalance 
+      present in the dataset.</p>
+
+      <!-- V. Conclusion -->
+      <div class="section-heading">V. Conclusion</div>
+      <p>This paper presented a hybrid CNN-LSTM intrusion detection framework for 
+      IoT networks. Experimental results demonstrate that the proposed model 
+      achieves state-of-the-art performance on standard benchmarks. Future work 
+      will focus on federated learning integration to enable privacy-preserving 
+      distributed IDS deployment across heterogeneous IoT environments.</p>
+
+      <!-- References -->
+      <div class="section-heading">References</div>
+      <div class="references">
+        <p class="ref-item no-indent">[1] Statista Research Department, "IoT connected devices worldwide 2019–2030," Statista, 2023.</p>
+        <p class="ref-item no-indent">[2] A. A. Diro and N. Chilamkurti, "Distributed attack detection scheme using deep learning approach for Internet of Things," <i>Future Generation Computer Systems</i>, vol. 82, pp. 761–768, 2018.</p>
+        <p class="ref-item no-indent">[3] E. Anthi, L. Williams, M. Slowinska, G. Theodorakopoulos, and P. Burnap, "A supervised intrusion detection system for smart home IoT devices," <i>IEEE Internet of Things Journal</i>, vol. 6, no. 5, pp. 9042–9053, 2019.</p>
+        <p class="ref-item no-indent">[4] J. Kim, J. Kim, H. L. T. Thu, and H. Kim, "Long short term memory recurrent neural network classifier for intrusion detection," in <i>Proc. ICPADS</i>, 2016, pp. 1–9.</p>
+        <p class="ref-item no-indent">[5] Y. Wu, Y. Wei, and J. Feng, "Network intrusion detection based on a multi-scale CNN," <i>Electronics</i>, vol. 9, no. 9, p. 1417, 2020.</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
