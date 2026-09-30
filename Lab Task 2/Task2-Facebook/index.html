@@ -3,942 +3,1100 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Facebook</title>
+  <title>Discordly</title>
   <style>
-    /* ── Reset ───────────────────────────────────────── */
+
+    /* ── Reset ─────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --bg-primary:    #36393f;
+      --bg-secondary:  #2f3136;
+      --bg-tertiary:   #202225;
+      --bg-hover:      #42464d;
+      --bg-active:     #393c43;
+      --bg-modifier:   #4f545c;
+      --text-normal:   #dcddde;
+      --text-muted:    #72767d;
+      --text-bright:   #ffffff;
+      --text-link:     #00b0f4;
+      --brand:         #5865f2;
+      --brand-hover:   #4752c4;
+      --green:         #3ba55d;
+      --yellow:        #faa81a;
+      --red:           #ed4245;
+      --header-height: 48px;
+      --server-w:      72px;
+      --channel-w:     240px;
+      --members-w:     240px;
+    }
+
     body {
-      font-family: Helvetica, Arial, sans-serif;
-      background: #f0f2f5;
-      color: #050505;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-normal);
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
     }
 
     /* ══════════════════════════════════════════════════
-       NAVBAR
+       1. SERVER LIST (leftmost column)
     ══════════════════════════════════════════════════ */
-    .navbar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 56px;
-      background: #fff;
-      box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    .server-list {
+      width: var(--server-w);
+      background: var(--bg-tertiary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 0;
+      gap: 8px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .server-list::-webkit-scrollbar { width: 0; }
+
+    .server-icon {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: border-radius 0.2s, background 0.2s;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .server-icon:hover { border-radius: 16px; }
+
+    .server-icon::before {
+      content: '';
+      position: absolute;
+      left: -16px;
+      width: 4px;
+      background: var(--text-bright);
+      border-radius: 0 4px 4px 0;
+      transition: height 0.2s;
+      height: 0;
+    }
+
+    .server-icon:hover::before { height: 20px; }
+    .server-icon.active::before { height: 40px; }
+    .server-icon.active { border-radius: 16px; }
+
+    .server-icon.logo {
+      background: var(--brand);
+      border-radius: 50%;
+      color: #fff;
+      font-size: 1.4rem;
+    }
+
+    .server-icon.logo:hover { border-radius: 16px; background: var(--brand-hover); }
+
+    .server-divider {
+      width: 32px; height: 2px;
+      background: var(--bg-modifier);
+      border-radius: 1px;
+      flex-shrink: 0;
+    }
+
+    .server-icon.add {
+      background: var(--bg-secondary);
+      color: var(--green);
+      font-size: 1.5rem;
+    }
+
+    .server-icon.add:hover { background: var(--green); color: #fff; }
+
+    /* notification badge */
+    .notif-badge {
+      position: absolute;
+      bottom: -2px; right: -2px;
+      background: var(--red);
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 700;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid var(--bg-tertiary);
+    }
+
+    /* ══════════════════════════════════════════════════
+       2. CHANNEL SIDEBAR
+    ══════════════════════════════════════════════════ */
+    .channel-sidebar {
+      width: var(--channel-w);
+      background: var(--bg-secondary);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    /* Server header */
+    .server-header {
+      height: var(--header-height);
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 16px;
-      z-index: 100;
-    }
-
-    /* Left */
-    .nav-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: 1;
-    }
-
-    .fb-icon {
-      width: 40px; height: 40px;
-      background: #1877f2;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff;
-      font-size: 1.5rem;
-      font-weight: 900;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-bright);
+      border-bottom: 1px solid var(--bg-tertiary);
+      cursor: pointer;
       flex-shrink: 0;
-      font-style: italic;
     }
 
-    .search-bar {
-      display: flex;
-      align-items: center;
-      background: #f0f2f5;
-      border-radius: 20px;
-      padding: 8px 12px;
-      gap: 8px;
-      width: 240px;
+    .server-header:hover { background: var(--bg-hover); }
+
+    .boost-badge {
+      background: #ff73fa;
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      margin-left: 6px;
     }
 
-    .search-bar span { font-size: 0.9rem; color: #65676b; }
-    .search-bar input {
-      border: none; background: transparent; outline: none;
-      font-size: 0.93rem; color: #050505; width: 100%;
+    /* Channel list */
+    .channel-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
     }
-    .search-bar input::placeholder { color: #65676b; }
 
-    /* Center Nav Tabs */
-    .nav-center {
+    .channel-list::-webkit-scrollbar { width: 4px; }
+    .channel-list::-webkit-scrollbar-thumb { background: var(--bg-modifier); border-radius: 2px; }
+
+    .category {
+      padding: 16px 8px 4px 16px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      cursor: pointer;
       display: flex;
       align-items: center;
       gap: 4px;
-      flex: 1.2;
-      justify-content: center;
     }
 
-    .nav-tab {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 112px;
-      height: 48px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1.35rem;
-      color: #65676b;
-      border-bottom: 3px solid transparent;
-      transition: background 0.15s;
-    }
+    .category:hover { color: var(--text-normal); }
 
-    .nav-tab:hover { background: #f2f2f2; }
-
-    .nav-tab.active {
-      color: #1877f2;
-      border-bottom: 3px solid #1877f2;
-      border-radius: 8px 8px 0 0;
-    }
-
-    /* Right */
-    .nav-right {
+    .channel-item {
       display: flex;
       align-items: center;
       gap: 8px;
-      flex: 1;
-      justify-content: flex-end;
+      padding: 6px 8px 6px 16px;
+      border-radius: 4px;
+      margin: 1px 8px;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      position: relative;
     }
 
-    .nav-btn {
-      width: 40px; height: 40px;
-      background: #e4e6eb;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
+    .channel-item:hover { background: var(--bg-hover); color: var(--text-normal); }
+
+    .channel-item.active {
+      background: var(--bg-active);
+      color: var(--text-bright);
+      font-weight: 600;
+    }
+
+    .channel-prefix {
       font-size: 1.1rem;
-      transition: background 0.15s;
+      flex-shrink: 0;
+      color: var(--text-muted);
     }
 
-    .nav-btn:hover { background: #d8dadf; }
+    .channel-item.active .channel-prefix { color: var(--text-normal); }
 
-    .nav-avatar {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      background: #1877f2;
-      display: flex; align-items: center; justify-content: center;
+    .unread-badge {
+      margin-left: auto;
+      background: var(--red);
       color: #fff;
+      font-size: 0.65rem;
       font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-    }
-
-    /* ══════════════════════════════════════════════════
-       PAGE LAYOUT
-    ══════════════════════════════════════════════════ */
-    .page {
-      display: grid;
-      grid-template-columns: 360px 1fr 360px;
-      gap: 0;
-      padding-top: 56px;
-      min-height: 100vh;
-    }
-
-    /* ══════════════════════════════════════════════════
-       LEFT SIDEBAR
-    ══════════════════════════════════════════════════ */
-    .sidebar-left {
-      padding: 12px 8px;
-      position: sticky;
-      top: 56px;
-      height: calc(100vh - 56px);
-      overflow-y: auto;
-    }
-
-    .sidebar-left::-webkit-scrollbar { width: 0; }
-
-    .sidebar-profile {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 8px;
+      padding: 1px 5px;
       border-radius: 8px;
-      cursor: pointer;
-      margin-bottom: 4px;
     }
 
-    .sidebar-profile:hover { background: #f2f2f2; }
-
-    .sidebar-avatar {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: #1877f2;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-weight: 700; font-size: 0.85rem;
-      flex-shrink: 0;
-    }
-
-    .sidebar-name { font-size: 0.93rem; font-weight: 600; }
-
-    .sidebar-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 8px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-bottom: 2px;
-    }
-
-    .sidebar-item:hover { background: #f2f2f2; }
-
-    .sidebar-item-icon {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.15rem;
-      flex-shrink: 0;
-    }
-
-    .icon-friends  { background: #e7f3ff; color: #1877f2; }
-    .icon-memories { background: #ffe4e6; color: #e41e3f; }
-    .icon-saved    { background: #e7f3ff; color: #1877f2; }
-    .icon-groups   { background: #e6f9f0; color: #44bd87; }
-    .icon-video    { background: #ffe4f0; color: #e81c8a; }
-    .icon-market   { background: #fff3cd; color: #f4a523; }
-    .icon-events   { background: #fce8ff; color: #9b59b6; }
-    .icon-feeds    { background: #e7f3ff; color: #1877f2; }
-
-    .sidebar-item-label { font-size: 0.93rem; font-weight: 400; }
-
-    .sidebar-divider {
-      border: none;
-      border-top: 1px solid #e4e6eb;
-      margin: 8px 0;
-    }
-
-    .sidebar-section-title {
-      padding: 8px;
-      font-size: 1rem;
-      font-weight: 700;
-      color: #050505;
-    }
-
-    .see-more {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 8px;
-      border-radius: 8px;
-      cursor: pointer;
-      color: #050505;
-    }
-
-    .see-more:hover { background: #f2f2f2; }
-
-    .see-more-icon {
-      width: 36px; height: 36px;
-      background: #e4e6eb;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem;
-    }
-
-    .sidebar-footer {
-      padding: 8px;
-      font-size: 0.72rem;
-      color: #65676b;
-      line-height: 1.8;
-    }
-
-    .sidebar-footer a {
-      color: #65676b;
-      text-decoration: none;
-      margin-right: 4px;
-    }
-
-    .sidebar-footer a:hover { text-decoration: underline; }
-
-    /* ══════════════════════════════════════════════════
-       CENTER FEED
-    ══════════════════════════════════════════════════ */
-    .feed {
-      padding: 24px 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      max-width: 590px;
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    /* ── Stories ── */
-    .stories-row {
-      display: flex;
-      gap: 8px;
-      width: 100%;
-    }
-
-    .story-card {
-      flex: 1;
-      height: 200px;
-      border-radius: 12px;
-      overflow: hidden;
-      cursor: pointer;
-      position: relative;
-      box-shadow: 0 1px 2px rgba(0,0,0,.1);
-    }
-
-    .story-bg {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: flex-end;
-      padding: 10px 8px;
-    }
-
-    .story-bg.create {
-      background: #fff;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      padding-bottom: 12px;
-    }
-
-    .story-add-btn {
-      width: 40px; height: 40px;
-      background: #1877f2;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff;
-      font-size: 1.4rem;
-      margin-bottom: 8px;
-      border: 3px solid #fff;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-    }
-
-    .story-create-label {
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-align: center;
-      color: #050505;
-    }
-
-    .story-top-avatar {
-      position: absolute;
-      top: 10px; left: 10px;
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      border: 3px solid #1877f2;
-    }
-
-    .story-name {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #fff;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
-    }
-
-    .s1 { background: linear-gradient(160deg, #4facfe, #00f2fe); }
-    .s2 { background: linear-gradient(160deg, #f093fb, #f5576c); }
-    .s3 { background: linear-gradient(160deg, #4ade80, #22c55e); }
-    .s4 { background: linear-gradient(160deg, #fa709a, #fee140); }
-    .s5 { background: linear-gradient(160deg, #a18cd1, #fbc2eb); }
-
-    .story-avatar-mini {
-      position: absolute;
-      top: 10px; left: 10px;
-      width: 38px; height: 38px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.9);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700;
-      font-size: 0.85rem;
-      border: 3px solid #1877f2;
-      color: #1877f2;
-    }
-
-    /* ── Create Post Card ── */
-    .post-box {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 1px 2px rgba(0,0,0,.1);
-      padding: 12px 16px;
-      width: 100%;
-    }
-
-    .post-box-top {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .post-box-avatar {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      background: #1877f2;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-weight: 700; font-size: 0.9rem;
-      flex-shrink: 0;
-    }
-
-    .post-box-input {
-      flex: 1;
-      background: #f0f2f5;
-      border: none;
-      border-radius: 20px;
-      padding: 10px 16px;
-      font-size: 0.95rem;
-      color: #65676b;
-      cursor: pointer;
-      outline: none;
-      text-align: left;
-    }
-
-    .post-box-input:hover { background: #e4e6eb; }
-
-    .post-box-divider {
-      border: none;
-      border-top: 1px solid #e4e6eb;
-      margin-bottom: 8px;
-    }
-
-    .post-box-actions {
-      display: flex;
-      justify-content: space-around;
-    }
-
-    .post-action-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.87rem;
-      font-weight: 600;
-      color: #65676b;
-    }
-
-    .post-action-btn:hover { background: #f2f2f2; }
-
-    .post-action-btn span.icon { font-size: 1.2rem; }
-
-    /* ── Feed Post Card ── */
-    .post-card {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 1px 2px rgba(0,0,0,.1);
-      width: 100%;
-    }
-
-    .post-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px 0;
-    }
-
-    .post-avatar {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-weight: 700; font-size: 0.9rem;
-      flex-shrink: 0;
-    }
-
-    .post-meta { flex: 1; }
-
-    .post-author {
-      font-size: 0.93rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .post-author:hover { text-decoration: underline; }
-
-    .post-time {
-      font-size: 0.78rem;
-      color: #65676b;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .post-more {
-      font-size: 1.3rem;
-      color: #65676b;
-      cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 50%;
-    }
-
-    .post-more:hover { background: #f2f2f2; }
-
-    .post-text {
-      padding: 10px 16px;
-      font-size: 0.95rem;
-      line-height: 1.5;
-    }
-
-    .post-image {
-      width: 100%;
-      height: 300px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .post-image-placeholder {
-      width: 100%;
-      height: 300px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-    }
-
-    .post-stats {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 16px;
-      font-size: 0.87rem;
-      color: #65676b;
-    }
-
-    .post-reactions {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .reaction-icons { font-size: 1rem; }
-
-    .post-stat-divider {
-      border: none;
-      border-top: 1px solid #e4e6eb;
-      margin: 0 16px;
-    }
-
-    .post-actions {
-      display: flex;
-      justify-content: space-around;
-      padding: 4px 8px;
-    }
-
-    .post-action {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex: 1;
-      justify-content: center;
-      padding: 8px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.87rem;
-      font-weight: 600;
-      color: #65676b;
-    }
-
-    .post-action:hover { background: #f2f2f2; }
-
-    /* ══════════════════════════════════════════════════
-       RIGHT SIDEBAR
-    ══════════════════════════════════════════════════ */
-    .sidebar-right {
-      padding: 24px 8px;
-      position: sticky;
-      top: 56px;
-      height: calc(100vh - 56px);
-      overflow-y: auto;
-    }
-
-    .sidebar-right::-webkit-scrollbar { width: 0; }
-
-    .right-section-title {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #050505;
-      margin-bottom: 8px;
-      padding: 0 8px;
-    }
-
-    /* Sponsored */
-    .sponsored-card {
-      display: flex;
-      gap: 10px;
-      padding: 8px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-bottom: 4px;
-    }
-
-    .sponsored-card:hover { background: #f2f2f2; }
-
-    .sponsored-img {
-      width: 108px;
-      height: 108px;
-      border-radius: 8px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-    }
-
-    .sponsored-info { flex: 1; }
-    .sponsored-name { font-size: 0.87rem; font-weight: 600; margin-bottom: 2px; }
-    .sponsored-url  { font-size: 0.78rem; color: #65676b; margin-bottom: 4px; }
-    .sponsored-desc { font-size: 0.78rem; color: #65676b; }
-    .sponsored-label { font-size: 0.72rem; color: #65676b; padding: 0 8px; margin-bottom: 12px; }
-
-    .right-divider {
-      border: none;
-      border-top: 1px solid #e4e6eb;
-      margin: 12px 8px;
-    }
-
-    /* Contacts */
-    .contact-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 8px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-bottom: 2px;
-    }
-
-    .contact-item:hover { background: #f2f2f2; }
-
-    .contact-avatar {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-weight: 700; font-size: 0.82rem;
-      flex-shrink: 0;
-      position: relative;
-    }
-
-    .contact-avatar::after {
+    .channel-item.unread { color: var(--text-bright); font-weight: 600; }
+    .channel-item.unread::before {
       content: '';
       position: absolute;
-      bottom: 1px; right: 1px;
-      width: 10px; height: 10px;
-      background: #44bd87;
-      border-radius: 50%;
-      border: 2px solid #fff;
+      left: -4px;
+      width: 4px; height: 8px;
+      background: var(--text-bright);
+      border-radius: 0 4px 4px 0;
     }
 
-    .contact-name { font-size: 0.93rem; font-weight: 400; }
+    /* Voice channel */
+    .voice-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px 6px 16px;
+      border-radius: 4px;
+      margin: 1px 8px;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .voice-item:hover { background: var(--bg-hover); color: var(--text-normal); }
+
+    .voice-members { padding-left: 40px; }
+
+    .voice-member {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin: 2px 8px;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .voice-member:hover { background: var(--bg-hover); color: var(--text-normal); }
+
+    .voice-avatar {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; font-weight: 700; color: #fff;
+    }
+
+    /* User panel */
+    .user-panel {
+      height: 52px;
+      background: #292b2f;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .user-avatar-wrap { position: relative; cursor: pointer; }
+
+    .user-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--brand);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.78rem; font-weight: 700; color: #fff;
+    }
+
+    .status-dot {
+      position: absolute;
+      bottom: -1px; right: -1px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      border: 2px solid #292b2f;
+    }
+
+    .status-dot.online { background: var(--green); }
+
+    .user-info { flex: 1; min-width: 0; }
+
+    .user-name {
+      font-size: 0.87rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-tag {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .panel-icons {
+      display: flex;
+      gap: 4px;
+    }
+
+    .panel-icon {
+      width: 32px; height: 32px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .panel-icon:hover { background: var(--bg-hover); color: var(--text-normal); }
+
+    /* ══════════════════════════════════════════════════
+       3. MAIN CHAT AREA
+    ══════════════════════════════════════════════════ */
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* Chat header */
+    .chat-header {
+      height: var(--header-height);
+      background: var(--bg-primary);
+      border-bottom: 1px solid var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 8px;
+      flex-shrink: 0;
+      box-shadow: 0 1px 0 rgba(0,0,0,.2);
+    }
+
+    .chat-header-channel {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-bright);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-prefix { color: var(--text-muted); font-size: 1.15rem; }
+
+    .header-divider {
+      width: 1px; height: 24px;
+      background: var(--bg-modifier);
+      margin: 0 8px;
+    }
+
+    .chat-header-topic {
+      font-size: 0.87rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      margin-left: auto;
+    }
+
+    .header-action {
+      width: 36px; height: 36px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .header-action:hover { background: var(--bg-hover); color: var(--text-normal); }
+
+    .search-box {
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 0.87rem;
+      color: var(--text-muted);
+      width: 140px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Messages */
+    .messages-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 0;
+    }
+
+    .messages-area::-webkit-scrollbar { width: 8px; }
+    .messages-area::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 4px; }
+
+    /* Welcome banner */
+    .welcome-banner {
+      padding: 16px 16px 8px;
+      margin-bottom: 16px;
+    }
+
+    .welcome-icon {
+      width: 68px; height: 68px;
+      background: var(--bg-modifier);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+
+    .welcome-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 4px;
+    }
+
+    .welcome-sub {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .day-divider {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      margin: 8px 0;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .day-divider::before, .day-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--bg-modifier);
+    }
+
+    /* Message group */
+    .msg-group {
+      padding: 2px 16px;
+      display: flex;
+      gap: 16px;
+      position: relative;
+    }
+
+    .msg-group:hover { background: var(--bg-hover); }
+
+    .msg-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: #fff;
+      font-size: 0.9rem;
+      margin-top: 2px;
+    }
+
+    .msg-content { flex: 1; min-width: 0; }
+
+    .msg-header {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .msg-author {
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .msg-author:hover { text-decoration: underline; }
+
+    .role-badge {
+      font-size: 0.68rem;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .msg-time {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .msg-text {
+      font-size: 0.95rem;
+      line-height: 1.4;
+      color: var(--text-normal);
+    }
+
+    .msg-text a { color: var(--text-link); text-decoration: none; }
+    .msg-text a:hover { text-decoration: underline; }
+
+    /* Continued messages (no avatar) */
+    .msg-continuation {
+      padding: 1px 16px 1px 72px;
+      position: relative;
+    }
+
+    .msg-continuation:hover { background: var(--bg-hover); }
+
+    .msg-continuation .msg-text { font-size: 0.95rem; line-height: 1.4; }
+
+    .cont-time {
+      position: absolute;
+      left: 22px;
+      font-size: 0.65rem;
+      color: transparent;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .msg-continuation:hover .cont-time { color: var(--text-muted); }
+
+    /* Embed / image */
+    .msg-embed {
+      margin-top: 8px;
+      background: var(--bg-secondary);
+      border-left: 4px solid var(--brand);
+      border-radius: 4px;
+      padding: 10px 12px;
+      max-width: 520px;
+    }
+
+    .embed-title { font-weight: 700; color: var(--text-link); font-size: 0.93rem; margin-bottom: 4px; }
+    .embed-desc  { font-size: 0.87rem; color: var(--text-normal); }
+
+    .msg-image {
+      margin-top: 8px;
+      border-radius: 4px;
+      background: var(--bg-secondary);
+      width: 320px; height: 180px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem;
+      color: var(--text-muted);
+    }
+
+    /* Reaction */
+    .msg-reactions {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .reaction {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--bg-modifier);
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 0.87rem;
+      cursor: pointer;
+    }
+
+    .reaction:hover { background: var(--bg-hover); border-color: var(--brand); }
+    .reaction.active { background: rgba(88,101,242,0.15); border-color: var(--brand); color: var(--brand); }
+    .reaction .count { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); }
+    .reaction.active .count { color: var(--brand); }
+
+    /* Message input */
+    .message-input-wrap {
+      padding: 0 16px 24px;
+      flex-shrink: 0;
+    }
+
+    .message-input-box {
+      background: var(--bg-modifier);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 4px 0 16px;
+    }
+
+    .input-action {
+      width: 36px; height: 36px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .input-action:hover { color: var(--text-normal); }
+
+    .msg-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-normal);
+      font-size: 0.95rem;
+      padding: 11px 0;
+    }
+
+    .msg-input::placeholder { color: var(--text-muted); }
+
+    /* ══════════════════════════════════════════════════
+       4. MEMBERS SIDEBAR
+    ══════════════════════════════════════════════════ */
+    .members-sidebar {
+      width: var(--members-w);
+      background: var(--bg-secondary);
+      overflow-y: auto;
+      padding: 16px 8px;
+      flex-shrink: 0;
+    }
+
+    .members-sidebar::-webkit-scrollbar { width: 4px; }
+    .members-sidebar::-webkit-scrollbar-thumb { background: var(--bg-modifier); border-radius: 2px; }
+
+    .members-category {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      padding: 16px 8px 4px;
+    }
+
+    .member-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 2px;
+    }
+
+    .member-item:hover { background: var(--bg-hover); }
+
+    .member-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: #fff; font-size: 0.78rem;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .member-status {
+      position: absolute;
+      bottom: -1px; right: -1px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-secondary);
+    }
+
+    .member-item:hover .member-status { border-color: var(--bg-hover); }
+
+    .s-online  { background: var(--green); }
+    .s-idle    { background: var(--yellow); }
+    .s-dnd     { background: var(--red); }
+    .s-offline { background: var(--text-muted); }
+
+    .member-info { flex: 1; min-width: 0; }
+
+    .member-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-normal);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .member-item:hover .member-name { color: var(--text-bright); }
+
+    .member-activity {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .offline-member .member-name { color: var(--text-muted); }
+
   </style>
 </head>
 <body>
 
-  <!-- ══ NAVBAR ══════════════════════════════════════════ -->
-  <nav class="navbar">
-    <!-- Left -->
-    <div class="nav-left">
-      <div class="fb-icon">f</div>
-      <div class="search-bar">
-        <span>🔍</span>
-        <input type="text" placeholder="Search Facebook"/>
+  <!-- ══ SERVER LIST ══════════════════════════════════════ -->
+  <aside class="server-list">
+    <!-- Logo -->
+    <div class="server-icon logo active">⌘</div>
+    <div class="server-divider"></div>
+
+    <!-- Servers -->
+    <div class="server-icon active" style="background:#5865f2" title="BSCS-V-B">BS</div>
+    <div class="server-icon" style="background:#e85d04; position:relative" title="FSWB Lab">
+      FW
+      <span class="notif-badge">3</span>
+    </div>
+    <div class="server-icon" style="background:#059669" title="AI Study Group">AI</div>
+    <div class="server-icon" style="background:#7c3aed" title="Algo Gang">AG</div>
+    <div class="server-icon" style="background:#0891b2" title="OS Nerds">OS</div>
+    <div class="server-icon" style="background:#be185d" title="Air Uni CS">AU</div>
+
+    <div class="server-divider"></div>
+    <div class="server-icon add" title="Add a Server">+</div>
+    <div class="server-icon" style="background:var(--bg-secondary); color:var(--text-muted); font-size:1.2rem" title="Explore Servers">🧭</div>
+  </aside>
+
+  <!-- ══ CHANNEL SIDEBAR ══════════════════════════════════ -->
+  <aside class="channel-sidebar">
+    <!-- Server name -->
+    <div class="server-header">
+      <span>BSCS-V-B<span class="boost-badge">BOOSTED</span></span>
+      <span style="font-size:1.1rem; color:var(--text-muted)">∨</span>
+    </div>
+
+    <!-- Channels -->
+    <div class="channel-list">
+      <!-- Text Channels -->
+      <div class="category">▾ Text Channels</div>
+
+      <div class="channel-item unread">
+        <span class="channel-prefix">#</span>
+        announcements
+        <span class="unread-badge">1</span>
+      </div>
+      <div class="channel-item active">
+        <span class="channel-prefix">#</span>
+        general
+      </div>
+      <div class="channel-item">
+        <span class="channel-prefix">#</span>
+        memes
+      </div>
+      <div class="channel-item unread">
+        <span class="channel-prefix">#</span>
+        fswb-tasks
+        <span class="unread-badge">5</span>
+      </div>
+      <div class="channel-item">
+        <span class="channel-prefix">#</span>
+        resources
+      </div>
+      <div class="channel-item">
+        <span class="channel-prefix">#</span>
+        off-topic
+      </div>
+
+      <!-- Study Rooms -->
+      <div class="category">▾ Study Rooms</div>
+
+      <div class="channel-item">
+        <span class="channel-prefix">#</span>
+        daa-help
+      </div>
+      <div class="channel-item">
+        <span class="channel-prefix">#</span>
+        os-help
+      </div>
+      <div class="channel-item">
+        <span class="channel-prefix">#</span>
+        ai-help
+      </div>
+
+      <!-- Voice Channels -->
+      <div class="category">▾ Voice Channels</div>
+
+      <div class="voice-item">
+        <span style="font-size:1rem">🔊</span>
+        General
+        <span style="margin-left:auto; font-size:0.8rem">2</span>
+      </div>
+      <div class="voice-members">
+        <div class="voice-member">
+          <div class="voice-avatar" style="background:#e85d04">AK</div>
+          Ahmed Khan
+        </div>
+        <div class="voice-member">
+          <div class="voice-avatar" style="background:#059669">MJ</div>
+          M. Junaid
+        </div>
+      </div>
+      <div class="voice-item">
+        <span style="font-size:1rem">🔊</span>
+        Study Room
       </div>
     </div>
 
-    <!-- Center Tabs -->
-    <div class="nav-center">
-      <div class="nav-tab active" title="Home">🏠</div>
-      <div class="nav-tab" title="Friends">👥</div>
-      <div class="nav-tab" title="Watch">📺</div>
-      <div class="nav-tab" title="Marketplace">🏪</div>
-      <div class="nav-tab" title="Groups">⬛</div>
+    <!-- User panel -->
+    <div class="user-panel">
+      <div class="user-avatar-wrap">
+        <div class="user-avatar">SH</div>
+        <span class="status-dot online"></span>
+      </div>
+      <div class="user-info">
+        <div class="user-name">Susheer Hehe</div>
+        <div class="user-tag">#4269</div>
+      </div>
+      <div class="panel-icons">
+        <div class="panel-icon" title="Mute">🎙️</div>
+        <div class="panel-icon" title="Deafen">🎧</div>
+        <div class="panel-icon" title="Settings">⚙️</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══ CHAT AREA ════════════════════════════════════════ -->
+  <main class="chat-area">
+
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="chat-header-channel">
+        <span class="header-prefix">#</span>
+        general
+      </div>
+      <div class="header-divider"></div>
+      <div class="chat-header-topic">General chat for BSCS-V-B · Be respectful 🙏</div>
+      <div class="header-actions">
+        <div class="header-action" title="Threads">🧵</div>
+        <div class="header-action" title="Notifications">🔔</div>
+        <div class="header-action" title="Pinned Messages">📌</div>
+        <div class="header-action" title="Members">👥</div>
+        <div class="header-action" title="Search">🔍</div>
+        <div class="search-box">
+          <span>Search</span>
+          <span style="font-size:.75rem">Ctrl+F</span>
+        </div>
+        <div class="header-action" title="Inbox">📥</div>
+        <div class="header-action" title="Help">❓</div>
+      </div>
     </div>
 
-    <!-- Right -->
-    <div class="nav-right">
-      <div class="nav-avatar">SH</div>
-      <div class="nav-btn" title="Messenger">💬</div>
-      <div class="nav-btn" title="Notifications">🔔</div>
-      <div class="nav-btn" title="Menu">⋯</div>
+    <!-- Messages -->
+    <div class="messages-area">
+
+      <!-- Welcome -->
+      <div class="welcome-banner">
+        <div class="welcome-icon">🎉</div>
+        <div class="welcome-title">Welcome to #general</div>
+        <div class="welcome-sub">This is the start of the #general channel. Say hi!</div>
+      </div>
+
+      <div class="day-divider">Today</div>
+
+      <!-- Message 1 -->
+      <div class="msg-group">
+        <div class="msg-avatar" style="background:#e85d04">AK</div>
+        <div class="msg-content">
+          <div class="msg-header">
+            <span class="msg-author" style="color:#faa81a">Ahmed Khan</span>
+            <span class="role-badge" style="background:rgba(250,168,26,0.2); color:#faa81a">Admin</span>
+            <span class="msg-time">Today at 8:02 AM</span>
+          </div>
+          <div class="msg-text">Assalamu alaikum everyone 👋 reminder that FSWB lab task is due Friday!</div>
+          <div class="msg-reactions">
+            <div class="reaction active">👋 <span class="count">12</span></div>
+            <div class="reaction">✅ <span class="count">8</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message 2 continuation -->
+      <div class="msg-continuation">
+        <span class="cont-time">8:03 AM</span>
+        <div class="msg-text">Make sure you push to GitHub before the deadline. cc <span style="color:var(--brand)">@everyone</span></div>
+      </div>
+
+      <!-- Message 3 -->
+      <div class="msg-group">
+        <div class="msg-avatar" style="background:#7c3aed">SR</div>
+        <div class="msg-content">
+          <div class="msg-header">
+            <span class="msg-author" style="color:#c4a7e7">Sara Rehman</span>
+            <span class="msg-time">Today at 8:15 AM</span>
+          </div>
+          <div class="msg-text">done already 😎 check mine out</div>
+          <div class="msg-embed">
+            <div class="embed-title">🔗 FSWB-Lab-Tasks — GitHub</div>
+            <div class="embed-desc">HTML+CSS lab tasks — Timetable, Facebook clone, IEEE template. Built for BSCS-V-B Air University.</div>
+          </div>
+          <div class="msg-reactions">
+            <div class="reaction">🔥 <span class="count">6</span></div>
+            <div class="reaction active">😍 <span class="count">4</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message 4 -->
+      <div class="msg-group">
+        <div class="msg-avatar" style="background:#059669">MJ</div>
+        <div class="msg-content">
+          <div class="msg-header">
+            <span class="msg-author" style="color:#6ee7b7">M. Junaid</span>
+            <span class="msg-time">Today at 9:44 AM</span>
+          </div>
+          <div class="msg-text">bro can someone explain the IEEE two-column layout 💀 css is killing me</div>
+          <div class="msg-image">📄</div>
+        </div>
+      </div>
+
+      <!-- Message 5 continuation -->
+      <div class="msg-continuation">
+        <span class="cont-time">9:45 AM</span>
+        <div class="msg-text">like why is my text not wrapping into two columns properly 😭</div>
+        <div class="msg-reactions">
+          <div class="reaction">😭 <span class="count">9</span></div>
+          <div class="reaction">💀 <span class="count">7</span></div>
+          <div class="reaction active">😂 <span class="count">11</span></div>
+        </div>
+      </div>
+
+      <!-- Message 6 -->
+      <div class="msg-group">
+        <div class="msg-avatar" style="background:#5865f2">SH</div>
+        <div class="msg-content">
+          <div class="msg-header">
+            <span class="msg-author" style="color:#8ea1e1">Susheer Hehe</span>
+            <span class="role-badge" style="background:rgba(88,101,242,0.2); color:#8ea1e1">You</span>
+            <span class="msg-time">Today at 9:51 AM</span>
+          </div>
+          <div class="msg-text">use <code style="background:var(--bg-tertiary); padding:2px 5px; border-radius:3px; font-size:.87rem">display: grid; grid-template-columns: 1fr 1fr</code> on the wrapper bro 😭 that's it</div>
+        </div>
+      </div>
+
+      <!-- Message 7 continuation -->
+      <div class="msg-continuation">
+        <span class="cont-time">9:52 AM</span>
+        <div class="msg-text">also set <code style="background:var(--bg-tertiary); padding:2px 5px; border-radius:3px; font-size:.87rem">gap: 0 0.25in</code> for the column gap — IEEE standard</div>
+        <div class="msg-reactions">
+          <div class="reaction">❤️ <span class="count">5</span></div>
+          <div class="reaction active">🙏 <span class="count">3</span></div>
+        </div>
+      </div>
+
+      <!-- Message 8 -->
+      <div class="msg-group">
+        <div class="msg-avatar" style="background:#0891b2">ZA</div>
+        <div class="msg-content">
+          <div class="msg-header">
+            <span class="msg-author" style="color:#67e8f9">Zara Akhtar</span>
+            <span class="msg-time">Today at 11:22 AM</span>
+          </div>
+          <div class="msg-text">guys the Facebook homepage task was actually fun ngl 👀 made it responsive too</div>
+          <div class="msg-reactions">
+            <div class="reaction active">🔥 <span class="count">8</span></div>
+            <div class="reaction">👀 <span class="count">4</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end messages-area -->
+
+    <!-- Input -->
+    <div class="message-input-wrap">
+      <div class="message-input-box">
+        <div class="input-action" title="Upload">+</div>
+        <input class="msg-input" type="text" placeholder="Message #general"/>
+        <div class="input-action" title="GIF">GIF</div>
+        <div class="input-action" title="Sticker">🎟️</div>
+        <div class="input-action" title="Emoji">😊</div>
+      </div>
     </div>
-  </nav>
 
-  <!-- ══ PAGE LAYOUT ══════════════════════════════════════ -->
-  <div class="page">
+  </main>
 
-    <!-- ══ LEFT SIDEBAR ══════════════════════════════════ -->
-    <aside class="sidebar-left">
+  <!-- ══ MEMBERS SIDEBAR ══════════════════════════════════ -->
+  <aside class="members-sidebar">
 
-      <div class="sidebar-profile">
-        <div class="sidebar-avatar">SH</div>
-        <span class="sidebar-name">Susheer Hehe</span>
-      </div>
+    <div class="members-category">Online — 5</div>
 
-      <div class="sidebar-item">
-        <div class="sidebar-item-icon icon-friends">👥</div>
-        <span class="sidebar-item-label">Friends</span>
+    <div class="member-item">
+      <div class="member-avatar" style="background:#e85d04">
+        AK
+        <span class="member-status s-online"></span>
       </div>
-      <div class="sidebar-item">
-        <div class="sidebar-item-icon icon-memories">🕐</div>
-        <span class="sidebar-item-label">Memories</span>
+      <div class="member-info">
+        <div class="member-name" style="color:#faa81a">Ahmed Khan</div>
+        <div class="member-activity">🎮 Playing VS Code</div>
       </div>
-      <div class="sidebar-item">
-        <div class="sidebar-item-icon icon-saved">🔖</div>
-        <span class="sidebar-item-label">Saved</span>
-      </div>
-      <div class="sidebar-item">
-        <div class="sidebar-item-icon icon-groups">⬛</div>
-        <span class="sidebar-item-label">Groups</span>
-      </div>
-      <div class="sidebar-item">
-        <div class="sidebar-item-icon icon-video">▶️</div>
-        <span class="sidebar-item-label">Video</span>
-      </div>
-      <div class="sidebar-item">
-        <div class="sidebar-item-icon icon-market">🏪</div>
-        <span class="sidebar-item-label">Marketplace</span>
-      </div>
-      <div class="sidebar-item">
-        <div class="sidebar-item-icon icon-feeds">📰</div>
-        <span class="sidebar-item-label">Feeds</span>
-      </div>
-      <div class="sidebar-item">
-        <div class="sidebar-item-icon icon-events">📅</div>
-        <span class="sidebar-item-label">Events</span>
-      </div>
+    </div>
 
-      <div class="see-more">
-        <div class="see-more-icon">▾</div>
-        <span class="sidebar-item-label">See more</span>
+    <div class="member-item">
+      <div class="member-avatar" style="background:#5865f2">
+        SH
+        <span class="member-status s-online"></span>
       </div>
-
-      <hr class="sidebar-divider"/>
-      <div class="sidebar-section-title">Your shortcuts</div>
-
-      <div class="sidebar-item">
-        <div class="sidebar-item-icon" style="background:#e7f3ff; font-size:1.3rem;">🎮</div>
-        <span class="sidebar-item-label">Gaming</span>
+      <div class="member-info">
+        <div class="member-name" style="color:#8ea1e1">Susheer Hehe</div>
+        <div class="member-activity">💻 Building Discord UI</div>
       </div>
-      <div class="sidebar-item">
-        <div class="sidebar-item-icon" style="background:#fce8ff; font-size:1.3rem;">🎓</div>
-        <span class="sidebar-item-label">Air University CS</span>
+    </div>
+
+    <div class="member-item">
+      <div class="member-avatar" style="background:#7c3aed">
+        SR
+        <span class="member-status s-online"></span>
       </div>
-
-      <hr class="sidebar-divider"/>
-      <div class="sidebar-footer">
-        <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Advertising</a>
-        <a href="#">Ad choices</a><a href="#">Cookies</a><a href="#">More</a><br/>
-        Meta &copy; 2026
+      <div class="member-info">
+        <div class="member-name">Sara Rehman</div>
+        <div class="member-activity">🎧 Listening to Spotify</div>
       </div>
-    </aside>
+    </div>
 
-    <!-- ══ CENTER FEED ═══════════════════════════════════ -->
-    <main>
-      <div class="feed">
-
-        <!-- Stories -->
-        <div class="stories-row">
-          <!-- Create Story -->
-          <div class="story-card">
-            <div class="story-bg create">
-              <div style="flex:1; background:#e4e6eb; width:100%;"></div>
-              <div class="story-add-btn">+</div>
-              <span class="story-create-label">Create story</span>
-            </div>
-          </div>
-          <!-- Friend Stories -->
-          <div class="story-card">
-            <div class="story-bg s1" style="height:100%;">
-              <div class="story-avatar-mini">AK</div>
-              <span class="story-name">Ahmed K.</span>
-            </div>
-          </div>
-          <div class="story-card">
-            <div class="story-bg s2" style="height:100%;">
-              <div class="story-avatar-mini">SR</div>
-              <span class="story-name">Sara R.</span>
-            </div>
-          </div>
-          <div class="story-card">
-            <div class="story-bg s3" style="height:100%;">
-              <div class="story-avatar-mini">MJ</div>
-              <span class="story-name">M. Junaid</span>
-            </div>
-          </div>
-          <div class="story-card">
-            <div class="story-bg s4" style="height:100%;">
-              <div class="story-avatar-mini">ZA</div>
-              <span class="story-name">Zara A.</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Create Post Box -->
-        <div class="post-box">
-          <div class="post-box-top">
-            <div class="post-box-avatar">SH</div>
-            <input class="post-box-input" type="text" placeholder="What's on your mind, Susheer?" readonly/>
-          </div>
-          <hr class="post-box-divider"/>
-          <div class="post-box-actions">
-            <div class="post-action-btn">
-              <span class="icon">🎬</span> Live video
-            </div>
-            <div class="post-action-btn">
-              <span class="icon">🖼️</span> Photo/video
-            </div>
-            <div class="post-action-btn">
-              <span class="icon">😊</span> Feeling/activity
-            </div>
-          </div>
-        </div>
-
-        <!-- ── Post 1 ── -->
-        <div class="post-card">
-          <div class="post-header">
-            <div class="post-avatar" style="background:#e85d04;">AK</div>
-            <div class="post-meta">
-              <div class="post-author">Ahmed Khan</div>
-              <div class="post-time">2 h · 🌐</div>
-            </div>
-            <div class="post-more">···</div>
-          </div>
-          <div class="post-text">
-            Just finished my FSWB lab task — building a timetable in pure HTML &amp; CSS was actually fun 😄 
-            shoutout to the whole BSCS-V-B squad 🔥
-          </div>
-          <div class="post-image-placeholder" style="background:#dbeafe;">🖥️</div>
-          <div class="post-stats">
-            <div class="post-reactions">
-              <span class="reaction-icons">👍❤️😂</span>
-              <span style="margin-left:4px;">847</span>
-            </div>
-            <div>132 comments · 48 shares</div>
-          </div>
-          <hr class="post-stat-divider"/>
-          <div class="post-actions">
-            <div class="post-action">👍 Like</div>
-            <div class="post-action">💬 Comment</div>
-            <div class="post-action">↗️ Share</div>
-          </div>
-        </div>
-
-        <!-- ── Post 2 ── -->
-        <div class="post-card">
-          <div class="post-header">
-            <div class="post-avatar" style="background:#7c3aed;">SR</div>
-            <div class="post-meta">
-              <div class="post-author">Sara Rehman</div>
-              <div class="post-time">5 h · 👥</div>
-            </div>
-            <div class="post-more">···</div>
-          </div>
-          <div class="post-text">
-            Islamabad weather today is absolutely perfect ☁️❄️ 
-            someone come with me to F-9 park rn
-          </div>
-          <div class="post-image-placeholder" style="background:#dcfce7;">🌳</div>
-          <div class="post-stats">
-            <div class="post-reactions">
-              <span class="reaction-icons">❤️😍👍</span>
-              <span style="margin-left:4px;">2.1K</span>
-            </div>
-            <div>214 comments · 76 shares</div>
-          </div>
-          <hr class="post-stat-divider"/>
-          <div class="post-actions">
-            <div class="post-action">👍 Like</div>
-            <div class="post-action">💬 Comment</div>
-            <div class="post-action">↗️ Share</div>
-          </div>
-        </div>
-
-        <!-- ── Post 3 ── -->
-        <div class="post-card">
-          <div class="post-header">
-            <div class="post-avatar" style="background:#059669;">MJ</div>
-            <div class="post-meta">
-              <div class="post-author">Muhammad Junaid</div>
-              <div class="post-time">Yesterday at 11:30 PM · 🌐</div>
-            </div>
-            <div class="post-more">···</div>
-          </div>
-          <div class="post-text">
-            DAA exam next week 😭 anyone has good notes for NP-completeness? Lecture Hall 01 hits different at 9am 💀
-          </div>
-          <div class="post-stats">
-            <div class="post-reactions">
-              <span class="reaction-icons">😭😂👍</span>
-              <span style="margin-left:4px;">312</span>
-            </div>
-            <div>89 comments · 12 shares</div>
-          </div>
-          <hr class="post-stat-divider"/>
-          <div class="post-actions">
-            <div class="post-action">👍 Like</div>
-            <div class="post-action">💬 Comment</div>
-            <div class="post-action">↗️ Share</div>
-          </div>
-        </div>
-
+    <div class="member-item">
+      <div class="member-avatar" style="background:#0891b2">
+        ZA
+        <span class="member-status s-idle"></span>
       </div>
-    </main>
+      <div class="member-info">
+        <div class="member-name">Zara Akhtar</div>
+        <div class="member-activity">💤 Idle</div>
+      </div>
+    </div>
 
-    <!-- ══ RIGHT SIDEBAR ══════════════════════════════════ -->
-    <aside class="sidebar-right">
+    <div class="member-item">
+      <div class="member-avatar" style="background:#059669">
+        MJ
+        <span class="member-status s-dnd"></span>
+      </div>
+      <div class="member-info">
+        <div class="member-name">M. Junaid</div>
+        <div class="member-activity">🔴 Do Not Disturb</div>
+      </div>
+    </div>
 
-      <div class="right-section-title">Sponsored</div>
+    <div class="members-category">Offline — 3</div>
 
-      <div class="sponsored-card">
-        <div class="sponsored-img" style="background:#dbeafe;">💻</div>
-        <div class="sponsored-info">
-          <div class="sponsored-name">Coursera</div>
-          <div class="sponsored-url">coursera.org</div>
-          <div class="sponsored-desc">Learn Web Development. Earn a certificate today.</div>
-        </div>
+    <div class="member-item offline-member">
+      <div class="member-avatar" style="background:#4b5563">
+        NF
+        <span class="member-status s-offline"></span>
       </div>
-      <div class="sponsored-label">Sponsored</div>
+      <div class="member-info">
+        <div class="member-name">Noor Fatima</div>
+      </div>
+    </div>
 
-      <div class="sponsored-card">
-        <div class="sponsored-img" style="background:#fef9c3;">📱</div>
-        <div class="sponsored-info">
-          <div class="sponsored-name">Samsung Pakistan</div>
-          <div class="sponsored-url">samsung.com/pk</div>
-          <div class="sponsored-desc">Galaxy S25 — Capture every moment in stunning detail.</div>
-        </div>
+    <div class="member-item offline-member">
+      <div class="member-avatar" style="background:#4b5563">
+        UR
+        <span class="member-status s-offline"></span>
       </div>
-      <div class="sponsored-label">Sponsored</div>
+      <div class="member-info">
+        <div class="member-name">Usman Raza</div>
+      </div>
+    </div>
 
-      <hr class="right-divider"/>
-      <div class="right-section-title">Contacts</div>
+    <div class="member-item offline-member">
+      <div class="member-avatar" style="background:#4b5563">
+        HK
+        <span class="member-status s-offline"></span>
+      </div>
+      <div class="member-info">
+        <div class="member-name">Hamza Khan</div>
+      </div>
+    </div>
 
-      <div class="contact-item">
-        <div class="contact-avatar" style="background:#e85d04;">AK</div>
-        <span class="contact-name">Ahmed Khan</span>
-      </div>
-      <div class="contact-item">
-        <div class="contact-avatar" style="background:#7c3aed;">SR</div>
-        <span class="contact-name">Sara Rehman</span>
-      </div>
-      <div class="contact-item">
-        <div class="contact-avatar" style="background:#059669;">MJ</div>
-        <span class="contact-name">Muhammad Junaid</span>
-      </div>
-      <div class="contact-item">
-        <div class="contact-avatar" style="background:#0891b2;">ZA</div>
-        <span class="contact-name">Zara Akhtar</span>
-      </div>
-      <div class="contact-item">
-        <div class="contact-avatar" style="background:#be185d;">NF</div>
-        <span class="contact-name">Noor Fatima</span>
-      </div>
-      <div class="contact-item">
-        <div class="contact-avatar" style="background:#b45309;">UR</div>
-        <span class="contact-name">Usman Raza</span>
-      </div>
-
-    </aside>
-  </div>
+  </aside>
 
 </body>
 </html>
