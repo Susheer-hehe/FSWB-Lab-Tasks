@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Facebook</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body { background: #f0f2f5; padding-top: 56px; }
+
+    /* Navbar */
+    .fb-navbar { height: 56px; }
+    .fb-icon {
+      width: 40px; height: 40px;
+      background: #1877f2;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1.4rem; font-weight: 900; font-style: italic;
+      flex-shrink: 0;
+    }
+    .search-wrap {
+      background: #f0f2f5;
+      border-radius: 20px;
+      padding: 6px 14px;
+      display: flex; align-items: center; gap: 6px;
+      width: 230px;
+    }
+    .search-wrap input {
+      border: none; background: transparent; outline: none;
+      font-size: 0.9rem; width: 100%;
+    }
+    .nav-tab {
+      width: 100px; height: 48px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; color: #65676b;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+    }
+    .nav-tab:hover { background: #f0f2f5; }
+    .nav-tab.active { color: #1877f2; border-bottom: 3px solid #1877f2; }
+    .nav-icon-btn {
+      width: 40px; height: 40px;
+      background: #e4e6eb; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1.05rem;
+    }
+    .nav-icon-btn:hover { background: #d8dadf; }
+    .user-avatar {
+      width: 40px; height: 40px;
+      background: #1877f2; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 0.9rem; cursor: pointer;
+    }
+
+    /* Sidebars */
+    .sidebar {
+      position: sticky;
+      top: 68px;
+      height: calc(100vh - 68px);
+      overflow-y: auto;
+    }
+    .sidebar::-webkit-scrollbar { width: 0; }
+    .sidebar-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 8px 10px; border-radius: 8px; cursor: pointer;
+    }
+    .sidebar-item:hover { background: #e4e6eb; }
+    .sidebar-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .sidebar-label { font-size: 0.93rem; font-weight: 500; }
+
+    /* Stories */
+    .story-card {
+      height: 190px; border-radius: 12px;
+      overflow: hidden; cursor: pointer;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(0,0,0,.15);
+      flex: 1;
+    }
+    .story-inner {
+      height: 100%; width: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      padding-bottom: 10px;
+      position: relative;
+    }
+    .story-create { background: #fff; }
+    .story-create-top {
+      flex: 1; width: 100%;
+      background: #e4e6eb;
+    }
+    .story-add {
+      width: 40px; height: 40px;
+      background: #1877f2; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1.3rem;
+      border: 3px solid #fff;
+      margin-top: -20px; margin-bottom: 8px;
+    }
+    .story-name-label { font-size: 0.75rem; font-weight: 700; }
+    .story-avatar-badge {
+      position: absolute; top: 10px; left: 10px;
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.82rem;
+      border: 3px solid #1877f2;
+      color: #fff;
+    }
+    .story-name-overlay {
+      font-size: 0.75rem; font-weight: 700;
+      color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.6);
+    }
+
+    /* Post box */
+    .post-input {
+      background: #f0f2f5; border: none;
+      border-radius: 20px; padding: 10px 16px;
+      font-size: 0.95rem; color: #65676b;
+      width: 100%; cursor: pointer;
+      outline: none;
+    }
+    .post-input:hover { background: #e4e6eb; }
+    .post-action-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 12px; border-radius: 8px;
+      cursor: pointer; font-size: 0.87rem; font-weight: 600;
+      color: #65676b; flex: 1; justify-content: center;
+    }
+    .post-action-btn:hover { background: #f0f2f5; }
+
+    /* Feed cards */
+    .post-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+    }
+    .post-img-placeholder {
+      width: 100%; height: 280px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem;
+    }
+    .react-btn {
+      display: flex; align-items: center; gap: 5px;
+      flex: 1; justify-content: center;
+      padding: 8px; border-radius: 8px;
+      cursor: pointer; font-size: 0.87rem; font-weight: 600;
+      color: #65676b;
+    }
+    .react-btn:hover { background: #f0f2f5; }
+
+    /* Right sidebar */
+    .contact-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 0.82rem;
+      position: relative; flex-shrink: 0;
+    }
+    .online-dot {
+      position: absolute; bottom: 1px; right: 1px;
+      width: 10px; height: 10px;
+      background: #44bd87; border-radius: 50%;
+      border: 2px solid #f0f2f5;
+    }
+    .sponsored-img {
+      width: 108px; height: 108px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-light bg-white shadow-sm fixed-top fb-navbar px-3">
+    <div class="d-flex align-items-center gap-2">
+      <div class="fb-icon">f</div>
+      <div class="search-wrap">
+        <span>🔍</span>
+        <input type="text" placeholder="Search Facebook"/>
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-1">
+      <div class="nav-tab active">🏠</div>
+      <div class="nav-tab">👥</div>
+      <div class="nav-tab">📺</div>
+      <div class="nav-tab">🏪</div>
+      <div class="nav-tab">⬛</div>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <div class="user-avatar">SH</div>
+      <div class="nav-icon-btn">💬</div>
+      <div class="nav-icon-btn">🔔</div>
+      <div class="nav-icon-btn">⋯</div>
+    </div>
+  </nav>
+
+  <!-- PAGE -->
+  <div class="container-fluid">
+    <div class="row g-0">
+
+      <!-- LEFT SIDEBAR -->
+      <div class="col-3 d-none d-xl-block">
+        <div class="sidebar p-2">
+          <div class="sidebar-item mb-1">
+            <div class="user-avatar">SH</div>
+            <span class="fw-semibold">Susheer Hehe</span>
+          </div>
+          <div class="sidebar-item"><div class="sidebar-icon" style="background:#e7f3ff">👥</div><span class="sidebar-label">Friends</span></div>
+          <div class="sidebar-item"><div class="sidebar-icon" style="background:#ffe4e6">🕐</div><span class="sidebar-label">Memories</span></div>
+          <div class="sidebar-item"><div class="sidebar-icon" style="background:#e7f3ff">🔖</div><span class="sidebar-label">Saved</span></div>
+          <div class="sidebar-item"><div class="sidebar-icon" style="background:#e6f9f0">⬛</div><span class="sidebar-label">Groups</span></div>
+          <div class="sidebar-item"><div class="sidebar-icon" style="background:#ffe4f0">▶️</div><span class="sidebar-label">Video</span></div>
+          <div class="sidebar-item"><div class="sidebar-icon" style="background:#fff3cd">🏪</div><span class="sidebar-label">Marketplace</span></div>
+          <div class="sidebar-item"><div class="sidebar-icon" style="background:#e7f3ff">📰</div><span class="sidebar-label">Feeds</span></div>
+          <div class="sidebar-item"><div class="sidebar-icon" style="background:#fce8ff">📅</div><span class="sidebar-label">Events</span></div>
+          <hr class="my-2"/>
+          <p class="fw-bold px-2 mb-1">Your shortcuts</p>
+          <div class="sidebar-item"><div class="sidebar-icon" style="background:#e7f3ff">🎮</div><span class="sidebar-label">Gaming</span></div>
+          <div class="sidebar-item"><div class="sidebar-icon" style="background:#fce8ff">🎓</div><span class="sidebar-label">Air University CS</span></div>
+          <hr class="my-2"/>
+          <p class="text-muted px-2" style="font-size:0.72rem;line-height:1.8">
+            <a href="#" class="text-muted text-decoration-none me-1">Privacy</a>
+            <a href="#" class="text-muted text-decoration-none me-1">Terms</a>
+            <a href="#" class="text-muted text-decoration-none me-1">Advertising</a>
+            <a href="#" class="text-muted text-decoration-none me-1">Cookies</a><br/>
+            Meta &copy; 2026
+          </p>
+        </div>
+      </div>
+
+      <!-- FEED -->
+      <div class="col-12 col-xl-6">
+        <div class="py-3 px-2" style="max-width:590px; margin:0 auto;">
+
+          <!-- Stories -->
+          <div class="d-flex gap-2 mb-3">
+            <div class="story-card">
+              <div class="story-inner story-create">
+                <div class="story-create-top"></div>
+                <div class="story-add">+</div>
+                <span class="story-name-label">Create story</span>
+              </div>
+            </div>
+            <div class="story-card" style="background:linear-gradient(160deg,#4facfe,#00f2fe)">
+              <div class="story-inner">
+                <div class="story-avatar-badge" style="background:#e85d04">AK</div>
+                <span class="story-name-overlay">Ahmed K.</span>
+              </div>
+            </div>
+            <div class="story-card" style="background:linear-gradient(160deg,#f093fb,#f5576c)">
+              <div class="story-inner">
+                <div class="story-avatar-badge" style="background:#7c3aed">SR</div>
+                <span class="story-name-overlay">Sara R.</span>
+              </div>
+            </div>
+            <div class="story-card" style="background:linear-gradient(160deg,#4ade80,#22c55e)">
+              <div class="story-inner">
+                <div class="story-avatar-badge" style="background:#059669">MJ</div>
+                <span class="story-name-overlay">M. Junaid</span>
+              </div>
+            </div>
+            <div class="story-card" style="background:linear-gradient(160deg,#fa709a,#fee140)">
+              <div class="story-inner">
+                <div class="story-avatar-badge" style="background:#0891b2">ZA</div>
+                <span class="story-name-overlay">Zara A.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Create Post -->
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+              <div class="d-flex align-items-center gap-2 mb-3">
+                <div class="user-avatar">SH</div>
+                <input class="post-input" type="text" placeholder="What's on your mind, Susheer?" readonly/>
+              </div>
+              <hr class="my-2"/>
+              <div class="d-flex">
+                <div class="post-action-btn">🎬 Live video</div>
+                <div class="post-action-btn">🖼️ Photo/video</div>
+                <div class="post-action-btn">😊 Feeling</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 1 -->
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body pb-0">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="post-avatar" style="background:#e85d04">AK</div>
+                <div class="flex-grow-1">
+                  <div class="fw-semibold" style="font-size:.93rem">Ahmed Khan</div>
+                  <div class="text-muted" style="font-size:.78rem">2 h · 🌐</div>
+                </div>
+                <span class="text-muted" style="cursor:pointer">···</span>
+              </div>
+              <p style="font-size:.95rem">Just finished my FSWB lab task — building a timetable in pure HTML &amp; CSS was actually fun 😄 shoutout to the whole BSCS-V-B squad 🔥</p>
+            </div>
+            <div class="post-img-placeholder" style="background:#dbeafe">🖥️</div>
+            <div class="card-body pt-2 pb-0">
+              <div class="d-flex justify-content-between text-muted mb-2" style="font-size:.87rem">
+                <span>👍❤️😂 847</span>
+                <span>132 comments · 48 shares</span>
+              </div>
+              <hr class="my-1"/>
+              <div class="d-flex">
+                <div class="react-btn">👍 Like</div>
+                <div class="react-btn">💬 Comment</div>
+                <div class="react-btn">↗️ Share</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 2 -->
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body pb-0">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="post-avatar" style="background:#7c3aed">SR</div>
+                <div class="flex-grow-1">
+                  <div class="fw-semibold" style="font-size:.93rem">Sara Rehman</div>
+                  <div class="text-muted" style="font-size:.78rem">5 h · 👥</div>
+                </div>
+                <span class="text-muted" style="cursor:pointer">···</span>
+              </div>
+              <p style="font-size:.95rem">Islamabad weather today is absolutely perfect ☁️❄️ someone come with me to F-9 park rn</p>
+            </div>
+            <div class="post-img-placeholder" style="background:#dcfce7">🌳</div>
+            <div class="card-body pt-2 pb-0">
+              <div class="d-flex justify-content-between text-muted mb-2" style="font-size:.87rem">
+                <span>❤️😍👍 2.1K</span>
+                <span>214 comments · 76 shares</span>
+              </div>
+              <hr class="my-1"/>
+              <div class="d-flex">
+                <div class="react-btn">👍 Like</div>
+                <div class="react-btn">💬 Comment</div>
+                <div class="react-btn">↗️ Share</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 3 -->
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body pb-0">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="post-avatar" style="background:#059669">MJ</div>
+                <div class="flex-grow-1">
+                  <div class="fw-semibold" style="font-size:.93rem">Muhammad Junaid</div>
+                  <div class="text-muted" style="font-size:.78rem">Yesterday at 11:30 PM · 🌐</div>
+                </div>
+                <span class="text-muted" style="cursor:pointer">···</span>
+              </div>
+              <p style="font-size:.95rem">DAA exam next week 😭 anyone has good notes for NP-completeness? Lecture Hall 01 hits different at 9am 💀</p>
+            </div>
+            <div class="card-body pt-2 pb-0">
+              <div class="d-flex justify-content-between text-muted mb-2" style="font-size:.87rem">
+                <span>😭😂👍 312</span>
+                <span>89 comments · 12 shares</span>
+              </div>
+              <hr class="my-1"/>
+              <div class="d-flex">
+                <div class="react-btn">👍 Like</div>
+                <div class="react-btn">💬 Comment</div>
+                <div class="react-btn">↗️ Share</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT SIDEBAR -->
+      <div class="col-3 d-none d-xl-block">
+        <div class="sidebar p-3">
+          <p class="fw-bold mb-2">Sponsored</p>
+          <div class="d-flex gap-2 mb-1 p-2 rounded" style="cursor:pointer">
+            <div class="sponsored-img" style="background:#dbeafe">💻</div>
+            <div>
+              <div class="fw-semibold" style="font-size:.87rem">Coursera</div>
+              <div class="text-muted" style="font-size:.75rem">coursera.org</div>
+              <div class="text-muted" style="font-size:.75rem">Learn Web Development. Earn a certificate today.</div>
+            </div>
+          </div>
+          <p class="text-muted mb-3" style="font-size:.72rem; padding-left:8px">Sponsored</p>
+          <div class="d-flex gap-2 mb-1 p-2 rounded" style="cursor:pointer">
+            <div class="sponsored-img" style="background:#fef9c3">📱</div>
+            <div>
+              <div class="fw-semibold" style="font-size:.87rem">Samsung Pakistan</div>
+              <div class="text-muted" style="font-size:.75rem">samsung.com/pk</div>
+              <div class="text-muted" style="font-size:.75rem">Galaxy S25 — Capture every moment in stunning detail.</div>
+            </div>
+          </div>
+          <p class="text-muted mb-3" style="font-size:.72rem; padding-left:8px">Sponsored</p>
+          <hr/>
+          <p class="fw-bold mb-2">Contacts</p>
+          <div class="sidebar-item mb-1">
+            <div class="contact-avatar" style="background:#e85d04">AK<span class="online-dot"></span></div>
+            <span style="font-size:.93rem">Ahmed Khan</span>
+          </div>
+          <div class="sidebar-item mb-1">
+            <div class="contact-avatar" style="background:#7c3aed">SR<span class="online-dot"></span></div>
+            <span style="font-size:.93rem">Sara Rehman</span>
+          </div>
+          <div class="sidebar-item mb-1">
+            <div class="contact-avatar" style="background:#059669">MJ<span class="online-dot"></span></div>
+            <span style="font-size:.93rem">Muhammad Junaid</span>
+          </div>
+          <div class="sidebar-item mb-1">
+            <div class="contact-avatar" style="background:#0891b2">ZA<span class="online-dot"></span></div>
+            <span style="font-size:.93rem">Zara Akhtar</span>
+          </div>
+          <div class="sidebar-item mb-1">
+            <div class="contact-avatar" style="background:#be185d">NF<span class="online-dot"></span></div>
+            <span style="font-size:.93rem">Noor Fatima</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
