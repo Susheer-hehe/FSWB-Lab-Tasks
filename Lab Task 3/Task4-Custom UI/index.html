@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Custom UI - Bootstrap</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    :root {
+      --srv:      #202225;
+      --ch-bg:    #2f3136;
+      --chat-bg:  #36393f;
+      --hover:    #42464d;
+      --active:   #393c43;
+      --muted:    #72767d;
+      --brand:    #5865f2;
+      --green:    #3ba55d;
+      --yellow:   #faa81a;
+      --red:      #ed4245;
+      --panel:    #292b2f;
+    }
+
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      background: var(--chat-bg);
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* ── Scrollbar ────────────────────────────── */
+    ::-webkit-scrollbar       { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: #4f545c; border-radius: 2px; }
+
+    /* ── Server list ──────────────────────────── */
+    #server-list {
+      width: 72px;
+      background: var(--srv);
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .srv-icon {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.85rem;
+      cursor: pointer;
+      transition: border-radius 0.2s;
+      position: relative;
+    }
+
+    .srv-icon:hover, .srv-icon.active { border-radius: 16px; }
+
+    .srv-icon::before {
+      content: '';
+      position: absolute; left: -16px;
+      width: 4px; background: #fff;
+      border-radius: 0 4px 4px 0;
+      transition: height 0.2s;
+      height: 0;
+    }
+
+    .srv-icon:hover::before  { height: 20px; }
+    .srv-icon.active::before { height: 40px; }
+
+    /* ── Channel sidebar ──────────────────────── */
+    #channel-sidebar {
+      width: 240px;
+      background: var(--ch-bg);
+      flex-shrink: 0;
+    }
+
+    .channel-header {
+      height: 48px;
+      background: var(--ch-bg);
+      border-bottom: 1px solid var(--srv);
+    }
+
+    .ch-category {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      padding: 14px 8px 4px 16px;
+    }
+
+    .ch-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 8px 5px 16px;
+      margin: 1px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 0.93rem;
+      position: relative;
+      text-decoration: none;
+    }
+
+    .ch-item:hover  { background: var(--hover); color: #dcddde; }
+    .ch-item.active { background: var(--active); color: #fff; font-weight: 600; }
+    .ch-item.unread { color: #fff; font-weight: 600; }
+
+    .ch-item.unread::before {
+      content: '';
+      position: absolute; left: -4px;
+      width: 4px; height: 8px;
+      background: #fff; border-radius: 0 4px 4px 0;
+    }
+
+    /* Speaker icon */
+    .spk {
+      width: 16px; height: 12px; position: relative; flex-shrink: 0;
+    }
+
+    .spk::before {
+      content: '';
+      position: absolute; left: 0; top: 2px;
+      width: 6px; height: 8px;
+      background: currentColor;
+      clip-path: polygon(0 30%, 60% 0%, 60% 100%, 0 70%);
+    }
+
+    .spk::after {
+      content: '';
+      position: absolute; right: 0; top: 0;
+      width: 8px; height: 12px;
+      border: 2px solid currentColor;
+      border-left: none;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* ── User panel ───────────────────────────── */
+    #user-panel { background: var(--panel); height: 52px; }
+
+    .status-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      border: 2px solid var(--panel);
+      position: absolute; bottom: -1px; right: -1px;
+    }
+
+    /* ── Chat area ────────────────────────────── */
+    #chat-area { background: var(--chat-bg); min-width: 0; }
+
+    .chat-header {
+      height: 48px;
+      background: var(--chat-bg);
+      border-bottom: 1px solid var(--srv);
+      box-shadow: 0 1px 0 rgba(0,0,0,.2);
+    }
+
+    .search-pill {
+      background: var(--srv);
+      border-radius: 4px;
+      padding: 2px 10px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      cursor: pointer;
+      width: 140px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .hdr-btn {
+      width: 36px; height: 36px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); cursor: pointer;
+      font-size: 0.72rem; font-weight: 700;
+    }
+
+    .hdr-btn:hover { background: var(--hover); color: #dcddde; }
+
+    /* Messages */
+    #messages { background: var(--chat-bg); overflow-y: auto; }
+
+    .welcome-icon {
+      width: 68px; height: 68px;
+      border-radius: 50%;
+      background: var(--brand);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; font-weight: 900; color: #fff;
+    }
+
+    .day-divider {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--muted); font-size: 0.75rem; font-weight: 600;
+    }
+
+    .day-divider::before, .day-divider::after {
+      content: ''; flex: 1; height: 1px; background: #4f545c;
+    }
+
+    /* Message input */
+    #msg-input-area { background: var(--chat-bg); }
+
+    .msg-box {
+      background: #4f545c;
+      border-radius: 8px;
+    }
+
+    .msg-box input {
+      background: transparent; border: none; outline: none;
+      color: #dcddde; font-size: 0.95rem; width: 100%;
+    }
+
+    .msg-box input::placeholder { color: var(--muted); }
+
+    .msg-icon-btn {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); cursor: pointer;
+      border-radius: 4px; font-size: 0.78rem; font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .msg-icon-btn:hover { color: #dcddde; background: rgba(255,255,255,0.07); }
+
+    /* ── Members sidebar ──────────────────────── */
+    #members-sidebar {
+      width: 240px;
+      background: var(--ch-bg);
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .mem-category {
+      font-size: 0.68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.07em;
+      color: var(--muted); padding: 16px 8px 4px;
+    }
+
+    .mem-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 8px; border-radius: 4px;
+      cursor: pointer; margin-bottom: 2px;
+    }
+
+    .mem-item:hover { background: var(--hover); }
+
+    .mem-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.78rem; color: #fff;
+      position: relative; flex-shrink: 0;
+    }
+
+    .mem-status {
+      position: absolute; bottom: -1px; right: -1px;
+      width: 10px; height: 10px; border-radius: 50%;
+      border: 2px solid var(--ch-bg);
+    }
+
+    .mem-item:hover .mem-status { border-color: var(--hover); }
+
+    .mem-name {
+      font-size: 0.9rem; font-weight: 600; color: #dcddde;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .mem-item:hover .mem-name { color: #fff; }
+
+    .mem-activity { font-size: 0.75rem; color: var(--muted); }
+
+    .offline .mem-name { color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<div class="d-flex h-100">
+
+  <!-- ══ SERVER LIST ════════════════════════════════════ -->
+  <div id="server-list" class="d-flex flex-column align-items-center py-3 gap-2">
+    <!-- Logo -->
+    <div class="srv-icon active" style="background:var(--brand); color:#fff; font-size:1.1rem; font-weight:900;">DC</div>
+
+    <div style="width:32px; height:2px; background:#4f545c; border-radius:1px;"></div>
+
+    <div class="srv-icon active" style="background:#5865f2; color:#fff;">BS</div>
+    <div class="srv-icon position-relative" style="background:#e85d04; color:#fff;">
+      FW
+      <span class="badge rounded-pill bg-danger position-absolute"
+            style="font-size:.55rem; padding:2px 5px; bottom:-2px; right:-2px; border:2px solid var(--srv);">3</span>
+    </div>
+    <div class="srv-icon" style="background:#059669; color:#fff;">AI</div>
+    <div class="srv-icon" style="background:#7c3aed; color:#fff;">AG</div>
+    <div class="srv-icon" style="background:#0891b2; color:#fff;">OS</div>
+    <div class="srv-icon" style="background:#be185d; color:#fff;">AU</div>
+
+    <div style="width:32px; height:2px; background:#4f545c; border-radius:1px;"></div>
+
+    <div class="srv-icon" style="background:var(--ch-bg); color:var(--green); font-size:1.5rem; font-weight:300;">+</div>
+    <div class="srv-icon" style="background:var(--ch-bg); color:var(--muted); font-size:0.75rem;">EX</div>
+  </div>
+
+  <!-- ══ CHANNEL SIDEBAR ════════════════════════════════ -->
+  <div id="channel-sidebar" class="d-flex flex-column">
+
+    <!-- Server header -->
+    <div class="channel-header d-flex align-items-center justify-content-between px-3 fw-bold text-white"
+         style="cursor:pointer;">
+      <span>
+        BSCS-V-B
+        <span class="badge ms-1" style="background:#ff73fa; font-size:0.58rem;">BOOSTED</span>
+      </span>
+      <span class="text-muted">v</span>
+    </div>
+
+    <!-- Scrollable channel list -->
+    <div class="flex-grow-1 overflow-auto py-2">
+
+      <div class="ch-category">&#9660; Text Channels</div>
+      <a class="ch-item unread" href="#">
+        <span class="fw-bold" style="color:var(--muted)">#</span> announcements
+        <span class="badge bg-danger ms-auto" style="font-size:.62rem;">1</span>
+      </a>
+      <a class="ch-item active" href="#">
+        <span class="fw-bold" style="color:#dcddde">#</span> general
+      </a>
+      <a class="ch-item" href="#">
+        <span class="fw-bold" style="color:var(--muted)">#</span> memes
+      </a>
+      <a class="ch-item unread" href="#">
+        <span class="fw-bold" style="color:var(--muted)">#</span> fswb-tasks
+        <span class="badge bg-danger ms-auto" style="font-size:.62rem;">5</span>
+      </a>
+      <a class="ch-item" href="#">
+        <span class="fw-bold" style="color:var(--muted)">#</span> resources
+      </a>
+      <a class="ch-item" href="#">
+        <span class="fw-bold" style="color:var(--muted)">#</span> off-topic
+      </a>
+
+      <div class="ch-category">&#9660; Study Rooms</div>
+      <a class="ch-item" href="#">
+        <span class="fw-bold" style="color:var(--muted)">#</span> daa-help
+      </a>
+      <a class="ch-item" href="#">
+        <span class="fw-bold" style="color:var(--muted)">#</span> os-help
+      </a>
+      <a class="ch-item" href="#">
+        <span class="fw-bold" style="color:var(--muted)">#</span> ai-help
+      </a>
+
+      <div class="ch-category">&#9660; Voice Channels</div>
+      <div class="ch-item">
+        <span class="spk"></span> General
+        <span class="ms-auto" style="font-size:0.8rem">2</span>
+      </div>
+      <div class="d-flex flex-column ps-4 ms-2">
+        <div class="d-flex align-items-center gap-2 py-1 px-2 rounded" style="cursor:pointer; color:var(--muted); font-size:.85rem;">
+          <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white"
+               style="width:20px;height:20px;font-size:.6rem;background:#e85d04;">AK</div>
+          Ahmed Khan
+        </div>
+        <div class="d-flex align-items-center gap-2 py-1 px-2 rounded" style="cursor:pointer; color:var(--muted); font-size:.85rem;">
+          <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white"
+               style="width:20px;height:20px;font-size:.6rem;background:#059669;">MJ</div>
+          M. Junaid
+        </div>
+      </div>
+      <div class="ch-item">
+        <span class="spk"></span> Study Room
+      </div>
+    </div>
+
+    <!-- User panel -->
+    <div id="user-panel" class="d-flex align-items-center gap-2 px-2">
+      <div class="position-relative" style="cursor:pointer;">
+        <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white"
+             style="width:32px;height:32px;background:var(--brand);font-size:.78rem;">SH</div>
+        <span class="status-dot" style="background:var(--green);"></span>
+      </div>
+      <div class="flex-grow-1 overflow-hidden">
+        <div class="fw-bold text-white" style="font-size:.87rem;">Susheer Hehe</div>
+        <div style="font-size:.72rem;color:var(--muted);">#4269</div>
+      </div>
+      <div class="d-flex gap-1">
+        <div class="hdr-btn">MIC</div>
+        <div class="hdr-btn">HP</div>
+        <div class="hdr-btn">&#9881;</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CHAT AREA ══════════════════════════════════════ -->
+  <div id="chat-area" class="flex-grow-1 d-flex flex-column min-vw-0">
+
+    <!-- Chat header -->
+    <div class="chat-header d-flex align-items-center gap-2 px-3">
+      <div class="d-flex align-items-center gap-2 fw-bold text-white">
+        <span style="color:var(--muted); font-size:1.1rem;">#</span>
+        general
+      </div>
+      <div style="width:1px;height:24px;background:#4f545c;margin:0 8px;"></div>
+      <div class="flex-grow-1 text-truncate" style="font-size:.87rem;color:var(--muted);">
+        General chat for BSCS-V-B &middot; Be respectful
+      </div>
+      <div class="d-flex gap-1 align-items-center ms-auto">
+        <div class="hdr-btn">THR</div>
+        <div class="hdr-btn">&#9993;</div>
+        <div class="hdr-btn">PIN</div>
+        <div class="hdr-btn">MEM</div>
+        <div class="search-pill">
+          <span>Search</span>
+          <span style="font-size:.7rem;">Ctrl+F</span>
+        </div>
+        <div class="hdr-btn">INB</div>
+        <div class="hdr-btn fw-bold">?</div>
+      </div>
+    </div>
+
+    <!-- Messages (empty) -->
+    <div id="messages" class="flex-grow-1 overflow-auto p-3">
+
+      <!-- Welcome -->
+      <div class="p-3 mb-3">
+        <div class="welcome-icon mb-3">#</div>
+        <div class="fw-bold text-white mb-1" style="font-size:1.5rem;">Welcome to #general</div>
+        <div style="color:var(--muted); font-size:.95rem;">
+          This is the start of the #general channel. Say hi to your fellow BSCS-V-B classmates!
+        </div>
+      </div>
+
+      <!-- Day divider -->
+      <div class="day-divider my-3 px-2">Today</div>
+
+    </div>
+
+    <!-- Message input -->
+    <div id="msg-input-area" class="px-3 pb-4 pt-2">
+      <div class="msg-box d-flex align-items-center gap-1 px-3">
+        <div class="msg-icon-btn">+</div>
+        <input type="text" placeholder="Message #general" class="flex-grow-1 py-3"/>
+        <div class="msg-icon-btn">GIF</div>
+        <div class="msg-icon-btn">STK</div>
+        <div class="msg-icon-btn">:)</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ MEMBERS SIDEBAR ════════════════════════════════ -->
+  <div id="members-sidebar">
+
+    <div class="mem-category">Online &mdash; 5</div>
+
+    <div class="mem-item">
+      <div class="mem-avatar" style="background:#e85d04;">
+        AK <span class="mem-status" style="background:var(--green);"></span>
+      </div>
+      <div class="overflow-hidden">
+        <div class="mem-name" style="color:#faa81a;">Ahmed Khan</div>
+        <div class="mem-activity">Playing VS Code</div>
+      </div>
+    </div>
+
+    <div class="mem-item">
+      <div class="mem-avatar" style="background:#5865f2;">
+        SH <span class="mem-status" style="background:var(--green);"></span>
+      </div>
+      <div class="overflow-hidden">
+        <div class="mem-name" style="color:#8ea1e1;">Susheer Hehe</div>
+        <div class="mem-activity">Building Discord UI</div>
+      </div>
+    </div>
+
+    <div class="mem-item">
+      <div class="mem-avatar" style="background:#7c3aed;">
+        SR <span class="mem-status" style="background:var(--green);"></span>
+      </div>
+      <div class="overflow-hidden">
+        <div class="mem-name">Sara Rehman</div>
+        <div class="mem-activity">Listening to music</div>
+      </div>
+    </div>
+
+    <div class="mem-item">
+      <div class="mem-avatar" style="background:#0891b2;">
+        ZA <span class="mem-status" style="background:var(--yellow);"></span>
+      </div>
+      <div class="overflow-hidden">
+        <div class="mem-name">Zara Akhtar</div>
+        <div class="mem-activity">Idle</div>
+      </div>
+    </div>
+
+    <div class="mem-item">
+      <div class="mem-avatar" style="background:#059669;">
+        MJ <span class="mem-status" style="background:var(--red);"></span>
+      </div>
+      <div class="overflow-hidden">
+        <div class="mem-name">M. Junaid</div>
+        <div class="mem-activity">Do Not Disturb</div>
+      </div>
+    </div>
+
+    <div class="mem-category">Offline &mdash; 3</div>
+
+    <div class="mem-item offline">
+      <div class="mem-avatar" style="background:#4b5563;">
+        NF <span class="mem-status" style="background:var(--muted);"></span>
+      </div>
+      <div class="overflow-hidden">
+        <div class="mem-name">Noor Fatima</div>
+      </div>
+    </div>
+
+    <div class="mem-item offline">
+      <div class="mem-avatar" style="background:#4b5563;">
+        UR <span class="mem-status" style="background:var(--muted);"></span>
+      </div>
+      <div class="overflow-hidden">
+        <div class="mem-name">Usman Raza</div>
+      </div>
+    </div>
+
+    <div class="mem-item offline">
+      <div class="mem-avatar" style="background:#4b5563;">
+        HK <span class="mem-status" style="background:var(--muted);"></span>
+      </div>
+      <div class="overflow-hidden">
+        <div class="mem-name">Hamza Khan</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
