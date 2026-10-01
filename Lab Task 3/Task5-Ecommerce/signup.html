@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create account | Harbor &amp; Pine</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<!-- ===== GLOBAL NAVBAR ===== -->
+<header class="sticky-top">
+<nav class="navbar navbar-expand flex-wrap navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="index.html">Harbor &amp; Pine</a>
+    <div class="navbar-collapse" id="mainNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="products.html">Shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="login.html">Log in</a></li>
+        <li class="nav-item"><a class="nav-link active" aria-current="page" href="signup.html">Sign up</a></li>
+      </ul>
+      <form class="d-flex me-lg-3 mb-2 mb-lg-0" role="search" action="products.html">
+        <input class="form-control me-2" type="search" name="q" placeholder="Search kitchen, linens, candles" aria-label="Search products">
+        <button class="btn btn-outline-light" type="submit">Search</button>
+      </form>
+      <a class="btn btn-outline-light position-relative" href="cart.html" aria-label="Cart, 4 items">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">4</span>
+      </a>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main>
+
+<section id="signup" class="bg-white border-top border-bottom">
+  <div class="container py-5"><div class="row justify-content-center"><div class="col-md-8 col-lg-6">
+    <div class="card shadow-sm"><div class="card-body p-4">
+      <h2 class="h4 mb-1">Create your account</h2>
+      <p class="text-muted">Save your addresses, track orders and check out faster.</p>
+      <form action="index.html" novalidate>
+        <div class="row g-3">
+          <div class="col-sm-6"><div class="form-floating"><input type="text" class="form-control is-valid" id="firstName" name="firstName" placeholder="First name" value="Jordan" required><label for="firstName">First name</label><div class="valid-feedback">Looks good.</div></div></div>
+          <div class="col-sm-6"><div class="form-floating"><input type="text" class="form-control is-valid" id="lastName" name="lastName" placeholder="Last name" value="Lee" required><label for="lastName">Last name</label><div class="valid-feedback">Looks good.</div></div></div>
+          <div class="col-12"><div class="form-floating"><input type="email" class="form-control is-valid" id="signupEmail" name="email" placeholder="name@example.com" value="jordan.lee@example.com" required><label for="signupEmail">Email address</label><div class="valid-feedback">This email is available.</div></div></div>
+          <div class="col-12"><div class="form-floating"><input type="password" class="form-control is-invalid" id="signupPassword" name="password" placeholder="Password" value="pine123" minlength="8" required><label for="signupPassword">Password</label><div class="invalid-feedback">Use at least 8 characters, including one number and one capital letter.</div></div></div>
+          <div class="col-12"><div class="form-floating"><input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required><label for="confirmPassword">Confirm password</label></div></div>
+          <div class="col-12"><div class="form-check"><input class="form-check-input is-invalid" type="checkbox" id="terms" name="terms" required><label class="form-check-label" for="terms">I agree to the <a href="signup.html">Terms of Sale</a> and <a href="signup.html">Privacy Policy</a></label><div class="invalid-feedback">You must agree before creating an account.</div></div></div>
+          <div class="col-12"><div class="form-check"><input class="form-check-input" type="checkbox" id="news" name="news"><label class="form-check-label" for="news">Email me about new arrivals and sales (optional)</label></div></div>
+          <div class="col-12"><button class="btn btn-dark w-100" type="submit">Create account</button></div>
+        </div>
+      </form>
+      <p class="text-center text-muted small mt-3 mb-0">Already have an account? <a href="login.html">Log in</a></p>
+    </div></div>
+  </div></div></div>
+</section>
+
+</main>
+
+<footer class="bg-dark text-light">
+  <div class="container py-4">
+    <div class="row g-3">
+      <div class="col-md-6"><h2 class="h6">Harbor &amp; Pine</h2><p class="small text-secondary mb-0">412 Alder Street, Portland, OR 97204<br>Support: help@harborandpine.example, Mon to Fri 9am to 5pm PT</p></div>
+      <div class="col-md-6"><ul class="list-inline small mb-0 text-md-end"><li class="list-inline-item"><a class="link-light" href="products.html">Shop</a></li><li class="list-inline-item"><a class="link-light" href="cart.html">Cart</a></li><li class="list-inline-item"><a class="link-light" href="login.html">Log in</a></li><li class="list-inline-item"><a class="link-light" href="signup.html">Sign up</a></li></ul></div>
+    </div>
+    <hr class="border-secondary">
+    <p class="small text-secondary mb-0">&copy; 2026 Harbor &amp; Pine Home Goods LLC. All rights reserved.</p>
+  </div>
+</footer>
+
+</body>
+</html>

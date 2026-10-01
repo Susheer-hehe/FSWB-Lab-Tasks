@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shopping cart | Harbor &amp; Pine</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<!-- ===== GLOBAL NAVBAR ===== -->
+<header class="sticky-top">
+<nav class="navbar navbar-expand flex-wrap navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="index.html">Harbor &amp; Pine</a>
+    <div class="navbar-collapse" id="mainNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="products.html">Shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="login.html">Log in</a></li>
+        <li class="nav-item"><a class="nav-link" href="signup.html">Sign up</a></li>
+      </ul>
+      <form class="d-flex me-lg-3 mb-2 mb-lg-0" role="search" action="products.html">
+        <input class="form-control me-2" type="search" name="q" placeholder="Search kitchen, linens, candles" aria-label="Search products">
+        <button class="btn btn-outline-light" type="submit">Search</button>
+      </form>
+      <a class="btn btn-outline-light position-relative" href="cart.html" aria-label="Cart, 4 items">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">4</span>
+      </a>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main>
+
+<section id="cart" class="container py-5">
+  <h2 class="h3 mb-4">Shopping cart <span class="text-muted fs-6">(4 items)</span></h2>
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <form action="cart.html">
+        <div class="table-responsive">
+          <table class="table table-bordered align-middle bg-white mb-0">
+            <thead class="table-light"><tr><th scope="col">Product</th><th scope="col">Unit price</th><th scope="col" style="width: 110px">Quantity</th><th scope="col">Total</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="d-flex align-items-center gap-3"><img src="https://placehold.co/80x80?text=Set" width="64" height="64" class="rounded" alt="Pour-over coffee set"><span>Stoneware Pour-Over Coffee Set</span></div></td>
+                <td>$48.00</td>
+                <td><label class="visually-hidden" for="q1">Quantity for pour-over set</label><input type="number" class="form-control" id="q1" name="q1" value="1" min="1" max="10"></td>
+                <td class="fw-semibold">$48.00</td>
+                <td><button type="submit" class="btn btn-outline-danger btn-sm" name="remove" value="1">Remove</button></td>
+              </tr>
+              <tr>
+                <td><div class="d-flex align-items-center gap-3"><img src="https://placehold.co/80x80?text=Throw" width="64" height="64" class="rounded" alt="Linen throw blanket"><span>Stonewashed Linen Throw Blanket</span></div></td>
+                <td>$64.00</td>
+                <td><label class="visually-hidden" for="q2">Quantity for linen throw</label><input type="number" class="form-control" id="q2" name="q2" value="2" min="1" max="10"></td>
+                <td class="fw-semibold">$128.00</td>
+                <td><button type="submit" class="btn btn-outline-danger btn-sm" name="remove" value="2">Remove</button></td>
+              </tr>
+              <tr>
+                <td><div class="d-flex align-items-center gap-3"><img src="https://placehold.co/80x80?text=Skillet" width="64" height="64" class="rounded" alt="Cast iron skillet"><span>Pre-Seasoned Cast Iron Skillet, 10 in</span></div></td>
+                <td>$39.00</td>
+                <td><label class="visually-hidden" for="q3">Quantity for skillet</label><input type="number" class="form-control" id="q3" name="q3" value="1" min="1" max="10"></td>
+                <td class="fw-semibold">$39.00</td>
+                <td><button type="submit" class="btn btn-outline-danger btn-sm" name="remove" value="3">Remove</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="d-flex justify-content-between mt-3">
+          <a href="products.html" class="btn btn-outline-secondary">Continue shopping</a>
+          <button type="submit" class="btn btn-secondary">Update cart</button>
+        </div>
+      </form>
+    </div>
+    <div class="col-lg-4">
+      <div class="card shadow-sm"><div class="card-body">
+        <h3 class="h5 mb-3">Order summary</h3>
+        <dl class="row mb-0">
+          <dt class="col-6 fw-normal">Subtotal</dt><dd class="col-6 text-end">$215.00</dd>
+          <dt class="col-6 fw-normal">Shipping</dt><dd class="col-6 text-end text-success">Free</dd>
+          <dt class="col-6 fw-normal">Estimated tax (8%)</dt><dd class="col-6 text-end">$17.20</dd>
+        </dl>
+        <hr>
+        <dl class="row mb-3"><dt class="col-6 fs-5">Total</dt><dd class="col-6 text-end fs-5 fw-bold mb-0">$232.20</dd></dl>
+        <a href="checkout.html" class="btn btn-dark w-100">Proceed to checkout</a>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="bg-dark text-light">
+  <div class="container py-4">
+    <div class="row g-3">
+      <div class="col-md-6"><h2 class="h6">Harbor &amp; Pine</h2><p class="small text-secondary mb-0">412 Alder Street, Portland, OR 97204<br>Support: help@harborandpine.example, Mon to Fri 9am to 5pm PT</p></div>
+      <div class="col-md-6"><ul class="list-inline small mb-0 text-md-end"><li class="list-inline-item"><a class="link-light" href="products.html">Shop</a></li><li class="list-inline-item"><a class="link-light" href="cart.html">Cart</a></li><li class="list-inline-item"><a class="link-light" href="login.html">Log in</a></li><li class="list-inline-item"><a class="link-light" href="signup.html">Sign up</a></li></ul></div>
+    </div>
+    <hr class="border-secondary">
+    <p class="small text-secondary mb-0">&copy; 2026 Harbor &amp; Pine Home Goods LLC. All rights reserved.</p>
+  </div>
+</footer>
+
+</body>
+</html>
