@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product | Harbor &amp; Pine</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<header class="sticky-top">
+<nav class="navbar navbar-expand flex-wrap navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="index.html">Harbor &amp; Pine</a>
+    <div class="navbar-collapse">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="products.html">Shop</a></li>
+        <li id="auth-links"></li>
+
+      </ul>
+      <a class="btn btn-outline-light position-relative" href="cart.html">
+        Cart
+        <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+      </a>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="container py-5">
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="products.html">Shop</a></li>
+      <li class="breadcrumb-item active" id="breadcrumb-title">Product</li>
+    </ol>
+  </nav>
+
+  <div id="loading" class="text-center py-5">
+    <div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>
+  </div>
+
+  <div id="product-detail" class="row g-5" style="display:none!important">
+    <div class="col-md-5 text-center">
+      <img id="p-image" src="" alt="" class="img-fluid rounded shadow-sm" style="max-height:400px;object-fit:contain;">
+    </div>
+    <div class="col-md-7">
+      <span id="p-category" class="badge bg-secondary mb-2"></span>
+      <h1 class="h3 fw-bold" id="p-title"></h1>
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <span class="text-warning" id="p-stars"></span>
+        <span class="text-muted small" id="p-rating"></span>
+      </div>
+      <p class="fs-3 fw-bold text-dark" id="p-price"></p>
+      <p class="text-muted" id="p-description"></p>
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <label class="fw-semibold" for="qty">Qty:</label>
+        <input type="number" id="qty" class="form-control w-auto" value="1" min="1" max="10">
+      </div>
+      <button class="btn btn-dark btn-lg w-100 mb-2" id="add-btn">Add to Cart</button>
+      <a href="cart.html" class="btn btn-outline-secondary w-100">View Cart</a>
+
+
+
+    </div>
+  </div>
+
+  <div id="error-msg" class="alert alert-danger" style="display:none">Product not found.</div>
+</main>
+
+<footer class="bg-dark text-light mt-5">
+  <div class="container py-4">
+    <p class="small text-secondary mb-0">&copy; 2026 Harbor &amp; Pine Home Goods LLC.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const API = 'https://fakestoreapi.com';
+
+function updateCartBadge() {
+  const cart = JSON.parse(localStorage.getItem('hp_cart') || '[]');
+  document.getElementById('cart-count').textContent = cart.reduce((s, i) => s + i.qty, 0);
+}
+
+function stars(r) {
+  const full = Math.round(r);
+  return '&#9733;'.repeat(full) + '&#9734;'.repeat(5 - full);
+}
+
+async function loadProduct() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id') || 1;
+  const endpoint = `${API}/products/${id}`;
+
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) throw new Error();
+    const p = await res.json();
+
+    document.title = `${p.title} | Harbor & Pine`;
+    document.getElementById('breadcrumb-title').textContent = p.title;
+    document.getElementById('p-image').src = p.image;
+    document.getElementById('p-image').alt = p.title;
+    document.getElementById('p-category').textContent = p.category;
+    document.getElementById('p-title').textContent = p.title;
+    document.getElementById('p-stars').innerHTML = stars(p.rating.rate);
+    document.getElementById('p-rating').textContent = `${p.rating.rate} / 5 (${p.rating.count} reviews)`;
+    document.getElementById('p-price').textContent = `$${p.price.toFixed(2)}`;
+    document.getElementById('p-description').textContent = p.description;
+
+    document.getElementById('add-btn').addEventListener('click', () => {
+      const qty = parseInt(document.getElementById('qty').value) || 1;
+      let cart = JSON.parse(localStorage.getItem('hp_cart') || '[]');
+      const item = cart.find(i => i.id === p.id);
+      if (item) item.qty += qty; else cart.push({ id: p.id, qty });
+      localStorage.setItem('hp_cart', JSON.stringify(cart));
+      updateCartBadge();
+      alert(`${p.title} added to cart!`);
+    });
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('product-detail').style.display = 'flex';
+  } catch {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error-msg').style.display = 'block';
+  }
+}
+
+function updateAuthNav() {
+  const el = document.getElementById('auth-links');
+  if (!el) return;
+  const token = localStorage.getItem('hp_token');
+  if (token) {
+    el.innerHTML = '<a class="nav-link" href="#" onclick="logout(event)">Log out</a>';
+    el.className = 'nav-item';
+  } else {
+    el.outerHTML = '<li class="nav-item"><a class="nav-link" href="login.html">Log in</a></li><li class="nav-item"><a class="nav-link" href="signup.html">Sign up</a></li>';
+  }
+}
+
+function logout(e) {
+  if (e) e.preventDefault();
+  localStorage.removeItem('hp_token');
+  window.location.reload();
+}
+
+updateCartBadge();
+updateAuthNav();
+loadProduct();
+</script>
+</body>
+</html>
